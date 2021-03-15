@@ -112,6 +112,8 @@ namespace vrmotioncompensation
 
 			//// function hooks related ////
 			std::shared_ptr<InterfaceHooks> _driverContextHooks;
+
+			bool deviceActivated[3] = { false, false, false }; //hmd, left, right
 		};
 	} // end namespace driver
 } // end namespace vrmotioncompensation

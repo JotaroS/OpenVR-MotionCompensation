@@ -13,12 +13,12 @@ namespace vrmotioncompensation
 			singleton = this;
 			memset(_openvrIdDeviceManipulationHandle, 0, sizeof(DeviceManipulationHandle*) * vr::k_unMaxTrackedDeviceCount);
 			memset(_deviceVersionMap, 0, sizeof(int) * vr::k_unMaxTrackedDeviceCount);
-			LOG(TRACE) << "jotarodriver::ServerDriver()";
+			LOG(INFO) << "jotarodriver::ServerDriver()";
 		}
 
 		ServerDriver::~ServerDriver()
 		{
-			LOG(TRACE) << "jotarodriver::~ServerDriver()";
+			LOG(INFO) << "jotarodriver::~ServerDriver()";
 		}
 
 		bool ServerDriver::hooksTrackedDevicePoseUpdated(void* serverDriverHost, int version, uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t& unPoseStructSize)
@@ -30,21 +30,21 @@ namespace vrmotioncompensation
 					_deviceVersionMap[unWhichDevice] = version;
 				}
 
-				LOG(TRACE) << "ServerDriver::hooksTrackedDevicePoseUpdated(version:" << version << ", deviceId:" << unWhichDevice << ", first used version: " << _deviceVersionMap[unWhichDevice] << ")";
+				LOG(INFO) << "ServerDriver::hooksTrackedDevicePoseUpdated(version:" << version << ", deviceId:" << unWhichDevice << ", first used version: " << _deviceVersionMap[unWhichDevice] << ")";
 				
 				if (_deviceVersionMap[unWhichDevice] == version)
 				{
 					return _openvrIdDeviceManipulationHandle[unWhichDevice]->handlePoseUpdate(unWhichDevice, newPose, unPoseStructSize);
 				}
 
-				LOG(TRACE) << "ServerDriver::hooksTrackedDevicePoseUpdated called for wrong version, ignoring ";
+				LOG(INFO) << "ServerDriver::hooksTrackedDevicePoseUpdated called for wrong version, ignoring ";
 			}
 			return true;
 		}
 
 		void ServerDriver::hooksTrackedDeviceAdded(void* serverDriverHost, int version, const char* pchDeviceSerialNumber, vr::ETrackedDeviceClass& eDeviceClass, void* pDriver)
 		{
-			LOG(TRACE) << "ServerDriver::hooksTrackedDeviceAdded(" << serverDriverHost << ", " << version << ", " << pchDeviceSerialNumber << ", " << (int)eDeviceClass << ", " << pDriver << ")";
+			LOG(INFO) << "ServerDriver::hooksTrackedDeviceAdded(" << serverDriverHost << ", " << version << ", " << pchDeviceSerialNumber << ", " << (int)eDeviceClass << ", " << pDriver << ")";
 			LOG(INFO) << "Found device " << pchDeviceSerialNumber << " (deviceClass: " << (int)eDeviceClass << ")";
 
 			// Create ManipulationInfo entry
@@ -57,7 +57,7 @@ namespace vrmotioncompensation
 
 		void ServerDriver::hooksTrackedDeviceActivated(void* serverDriver, int version, uint32_t unObjectId)
 		{
-			LOG(TRACE) << "ServerDriver::hooksTrackedDeviceActivated(" << serverDriver << ", " << version << ", " << unObjectId << ")";
+			LOG(INFO) << "ServerDriver::hooksTrackedDeviceActivated(" << serverDriver << ", " << version << ", " << unObjectId << ")";
 
 			// Search for the activated device
 			auto i = _deviceManipulationHandles.find(serverDriver);
@@ -70,6 +70,7 @@ namespace vrmotioncompensation
 
 				//LOG(INFO) << "Successfully added device " << handle->serialNumber() << " (OpenVR Id: " << handle->openvrId() << ")";
 				LOG(INFO) << "Successfully added device " << _openvrIdDeviceManipulationHandle[unObjectId]->serialNumber() << " (OpenVR Id: " << _openvrIdDeviceManipulationHandle[unObjectId]->openvrId() << ")";
+				deviceActivated[_openvrIdDeviceManipulationHandle[unObjectId]->openvrId()] = true;
 			}
 		}
 
@@ -113,7 +114,7 @@ namespace vrmotioncompensation
 
 		void ServerDriver::Cleanup()
 		{
-			LOG(TRACE) << "ServerDriver::Cleanup()";
+			LOG(INFO) << "ServerDriver::Cleanup()";
 			_driverContextHooks.reset();
 			MH_Uninitialize();
 			m_motionCompensation.StopDebugData();
@@ -125,8 +126,16 @@ namespace vrmotioncompensation
 		void ServerDriver::RunFrame()
 		{
 			// this is HMD
-			auto m_handle = this->getDeviceManipulationHandleById(0);
-			if(m_handle){
+			//if (deviceActivated[0]) {
+			//	auto m_handle = this->getDeviceManipulationHandleById(0);
+			//	m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			//}
+			if (deviceActivated[1]) {
+				auto m_handle = this->getDeviceManipulationHandleById(1);
+				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			}
+			if (deviceActivated[2]) {
+				auto m_handle = this->getDeviceManipulationHandleById(2);
 				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
 			}
 

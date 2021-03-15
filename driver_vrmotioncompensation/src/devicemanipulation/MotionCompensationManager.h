@@ -102,6 +102,7 @@ namespace vrmotioncompensation
 			bool applyMotionCompensation(vr::DriverPose_t& pose);
 
 			void runFrame();
+			bool applyGoGo(vr::DriverPose_t& pose);
 
 		private:
 
@@ -225,6 +226,9 @@ namespace vrmotioncompensation
 			vr::HmdVector3d_t _RefRotVel = { 0, 0, 0 };
 			vr::HmdVector3d_t _RefRotAcc = { 0, 0, 0 };
 
+			double _GoGoRefPos[3] ={0,0,0};
+			double _CDRatio[3] = {5.0,5.0,5.0};
+			double _LastPos[3] = {0,0,0};
 			bool _RefPoseValid = false;
 			int _RefPoseValidCounter = 0;
 		};
