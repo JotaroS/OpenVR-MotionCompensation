@@ -343,6 +343,15 @@ namespace vrmotioncompensation
 
 		bool MotionCompensationManager::applyMotionCompensation(vr::DriverPose_t& pose)
 		{
+			//jotaro: here you implement go-go or other physics model. This function should be called every frame.
+			//jotaro if MotionCompensate mode is true then change pose anyways TODO: change this when doing some inter-system comm
+			if(true){ //statement 'true' should be some thing else when implementing communication or UI stuff.
+				LOG(INFO)<<"jotaro: applyMoCo";
+				pose.vecPosition[0] = pose.vecPosition[1] = pose.vecPosition[2] = 0;
+			} 
+			
+			// below you can ignore.
+
 			if (_Enabled && _ZeroPoseValid && _RefPoseValid)
 			{
 

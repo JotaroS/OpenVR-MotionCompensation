@@ -60,6 +60,7 @@ namespace vrmotioncompensation
 
 		void DeviceManipulationHandle::setMotionCompensationDeviceMode(MotionCompensationDeviceMode DeviceMode)
 		{
+			LOG(INFO) << "Jotaro: setting motion compensation device mode as " << (int)DeviceMode;
 			m_deviceMode = DeviceMode;
 		}
 	} // end namespace driver

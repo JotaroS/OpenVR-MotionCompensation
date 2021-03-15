@@ -13,11 +13,12 @@ namespace vrmotioncompensation
 			singleton = this;
 			memset(_openvrIdDeviceManipulationHandle, 0, sizeof(DeviceManipulationHandle*) * vr::k_unMaxTrackedDeviceCount);
 			memset(_deviceVersionMap, 0, sizeof(int) * vr::k_unMaxTrackedDeviceCount);
+			LOG(TRACE) << "jotarodriver::ServerDriver()";
 		}
 
 		ServerDriver::~ServerDriver()
 		{
-			LOG(TRACE) << "driver::~ServerDriver()";
+			LOG(TRACE) << "jotarodriver::~ServerDriver()";
 		}
 
 		bool ServerDriver::hooksTrackedDevicePoseUpdated(void* serverDriverHost, int version, uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t& unPoseStructSize)
@@ -104,7 +105,9 @@ namespace vrmotioncompensation
 			}
 
 			// Start IPC thread
-			shmCommunicator.init(this);
+			// shmCommunicator.init(this);
+			
+
 			return vr::VRInitError_None;
 		}
 
@@ -121,12 +124,30 @@ namespace vrmotioncompensation
 		// Call frequency: ~93Hz
 		void ServerDriver::RunFrame()
 		{
+			// this is HMD
+			auto m_handle = this->getDeviceManipulationHandleById(0);
+			if(m_handle){
+				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			}
 
+			//the others should be controllers. (0,1)
+
+			// m_handle = this->getDeviceManipulationHandleById(1);
+			// if(m_handle){
+			// 	m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			// }
+			
+			// auto m_handle1 = this->getDeviceManipulationHandleById(1);
+			// auto m_handle2 = this->getDeviceManipulationHandleById(2);
+
+			// m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			// m_handle1->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			// m_handle2->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
 		}
 
 		DeviceManipulationHandle* ServerDriver::getDeviceManipulationHandleById(uint32_t unWhichDevice)
 		{
-			LOG(TRACE) << "getDeviceByID: unWhichDevice: " << unWhichDevice;
+			LOG(INFO) << "getDeviceByID: unWhichDevice: " << unWhichDevice;
 
 			std::lock_guard<std::recursive_mutex> lock(_deviceManipulationHandlesMutex);
 
@@ -138,12 +159,12 @@ namespace vrmotioncompensation
 				}
 				else
 				{
-					LOG(ERROR) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is NULL. unWhichDevice: " << unWhichDevice;
+					LOG(INFO) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is NULL. unWhichDevice: " << unWhichDevice;
 				}
 			}
 			else
 			{
-				LOG(ERROR) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is not valid. unWhichDevice: " << unWhichDevice;
+				LOG(INFO) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is not valid. unWhichDevice: " << unWhichDevice;
 			}
 
 			return nullptr;
