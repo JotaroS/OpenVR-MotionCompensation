@@ -1,10 +1,11 @@
+#include "../driver/ServerDriver.h"
 #include "DeviceManipulationHandle.h"
 
-#include "../driver/ServerDriver.h"
+
 #include "../hooks/IVRServerDriverHost004Hooks.h"
 #include "../hooks/IVRServerDriverHost005Hooks.h"
 
-#undef WIN32_LEAN_AND_MEAN
+// #define WIN32_LEAN_AND_MEAN
 #undef NOSOUND
 #include <Windows.h>
 // According to windows documentation mmsystem.h should be automatically included with Windows.h when WIN32_LEAN_AND_MEAN and NOSOUND are not defined
@@ -51,7 +52,7 @@ namespace vrmotioncompensation
 				//Check if the pose is valid to prevent unwanted jitter and movement
 				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
 				{
-					m_motionCompensationManager.applyMotionCompensation(newPose);
+					m_motionCompensationManager.applyGoGo(newPose);
 				}
 			}
 
@@ -60,6 +61,7 @@ namespace vrmotioncompensation
 
 		void DeviceManipulationHandle::setMotionCompensationDeviceMode(MotionCompensationDeviceMode DeviceMode)
 		{
+			LOG(INFO) << "Jotaro: setting motion compensation device mode as " << (int)DeviceMode;
 			m_deviceMode = DeviceMode;
 		}
 	} // end namespace driver

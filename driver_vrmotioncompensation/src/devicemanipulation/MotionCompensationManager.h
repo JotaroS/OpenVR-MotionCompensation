@@ -1,4 +1,9 @@
 #pragma once
+#include <boost/timer/timer.hpp>
+#include <boost/chrono/chrono.hpp>
+#include <boost/chrono/system_clocks.hpp>
+#include <boost/interprocess/windows_shared_memory.hpp>
+#include <boost/interprocess/mapped_region.hpp>
 
 #include <openvr_driver.h>
 #include <vrmotioncompensation_types.h>
@@ -6,11 +11,7 @@
 #include "../logging.h"
 #include "Debugger.h"
 
-#include <boost/timer/timer.hpp>
-#include <boost/chrono/chrono.hpp>
-#include <boost/chrono/system_clocks.hpp>
-#include <boost/interprocess/windows_shared_memory.hpp>
-#include <boost/interprocess/mapped_region.hpp>
+
 
 // driver namespace
 namespace vrmotioncompensation
@@ -102,6 +103,7 @@ namespace vrmotioncompensation
 			bool applyMotionCompensation(vr::DriverPose_t& pose);
 
 			void runFrame();
+			bool applyGoGo(vr::DriverPose_t& pose);
 
 		private:
 
@@ -225,6 +227,9 @@ namespace vrmotioncompensation
 			vr::HmdVector3d_t _RefRotVel = { 0, 0, 0 };
 			vr::HmdVector3d_t _RefRotAcc = { 0, 0, 0 };
 
+			double _GoGoRefPos[3] ={0,0,0};
+			double _CDRatio[3] = {5.0,5.0,5.0};
+			double _LastPos[3] = {0,0,0};
 			bool _RefPoseValid = false;
 			int _RefPoseValidCounter = 0;
 		};

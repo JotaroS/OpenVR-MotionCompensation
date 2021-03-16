@@ -1,6 +1,7 @@
+#include "../../MyUDPManager.h"
 #include "ServerDriver.h"
 #include "../devicemanipulation/DeviceManipulationHandle.h"
-
+#include <nlohmann/json.hpp>
 namespace vrmotioncompensation
 {
 	namespace driver
@@ -13,11 +14,12 @@ namespace vrmotioncompensation
 			singleton = this;
 			memset(_openvrIdDeviceManipulationHandle, 0, sizeof(DeviceManipulationHandle*) * vr::k_unMaxTrackedDeviceCount);
 			memset(_deviceVersionMap, 0, sizeof(int) * vr::k_unMaxTrackedDeviceCount);
+			LOG(INFO) << "jotarodriver::ServerDriver()";
 		}
 
 		ServerDriver::~ServerDriver()
 		{
-			LOG(TRACE) << "driver::~ServerDriver()";
+			LOG(INFO) << "jotarodriver::~ServerDriver()";
 		}
 
 		bool ServerDriver::hooksTrackedDevicePoseUpdated(void* serverDriverHost, int version, uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t& unPoseStructSize)
@@ -29,21 +31,21 @@ namespace vrmotioncompensation
 					_deviceVersionMap[unWhichDevice] = version;
 				}
 
-				LOG(TRACE) << "ServerDriver::hooksTrackedDevicePoseUpdated(version:" << version << ", deviceId:" << unWhichDevice << ", first used version: " << _deviceVersionMap[unWhichDevice] << ")";
+				LOG(INFO) << "ServerDriver::hooksTrackedDevicePoseUpdated(version:" << version << ", deviceId:" << unWhichDevice << ", first used version: " << _deviceVersionMap[unWhichDevice] << ")";
 				
 				if (_deviceVersionMap[unWhichDevice] == version)
 				{
 					return _openvrIdDeviceManipulationHandle[unWhichDevice]->handlePoseUpdate(unWhichDevice, newPose, unPoseStructSize);
 				}
 
-				LOG(TRACE) << "ServerDriver::hooksTrackedDevicePoseUpdated called for wrong version, ignoring ";
+				LOG(INFO) << "ServerDriver::hooksTrackedDevicePoseUpdated called for wrong version, ignoring ";
 			}
 			return true;
 		}
 
 		void ServerDriver::hooksTrackedDeviceAdded(void* serverDriverHost, int version, const char* pchDeviceSerialNumber, vr::ETrackedDeviceClass& eDeviceClass, void* pDriver)
 		{
-			LOG(TRACE) << "ServerDriver::hooksTrackedDeviceAdded(" << serverDriverHost << ", " << version << ", " << pchDeviceSerialNumber << ", " << (int)eDeviceClass << ", " << pDriver << ")";
+			LOG(INFO) << "ServerDriver::hooksTrackedDeviceAdded(" << serverDriverHost << ", " << version << ", " << pchDeviceSerialNumber << ", " << (int)eDeviceClass << ", " << pDriver << ")";
 			LOG(INFO) << "Found device " << pchDeviceSerialNumber << " (deviceClass: " << (int)eDeviceClass << ")";
 
 			// Create ManipulationInfo entry
@@ -56,7 +58,7 @@ namespace vrmotioncompensation
 
 		void ServerDriver::hooksTrackedDeviceActivated(void* serverDriver, int version, uint32_t unObjectId)
 		{
-			LOG(TRACE) << "ServerDriver::hooksTrackedDeviceActivated(" << serverDriver << ", " << version << ", " << unObjectId << ")";
+			LOG(INFO) << "ServerDriver::hooksTrackedDeviceActivated(" << serverDriver << ", " << version << ", " << unObjectId << ")";
 
 			// Search for the activated device
 			auto i = _deviceManipulationHandles.find(serverDriver);
@@ -69,6 +71,7 @@ namespace vrmotioncompensation
 
 				//LOG(INFO) << "Successfully added device " << handle->serialNumber() << " (OpenVR Id: " << handle->openvrId() << ")";
 				LOG(INFO) << "Successfully added device " << _openvrIdDeviceManipulationHandle[unObjectId]->serialNumber() << " (OpenVR Id: " << _openvrIdDeviceManipulationHandle[unObjectId]->openvrId() << ")";
+				deviceActivated[_openvrIdDeviceManipulationHandle[unObjectId]->openvrId()] = true;
 			}
 		}
 
@@ -104,29 +107,66 @@ namespace vrmotioncompensation
 			}
 
 			// Start IPC thread
-			shmCommunicator.init(this);
+			// shmCommunicator.init(this);
+			
+			// Start UDP Server
+			UDPSocket = new MyUDPManager();
 			return vr::VRInitError_None;
 		}
 
+
 		void ServerDriver::Cleanup()
 		{
-			LOG(TRACE) << "ServerDriver::Cleanup()";
+			LOG(INFO) << "ServerDriver::Cleanup()";
 			_driverContextHooks.reset();
 			MH_Uninitialize();
 			m_motionCompensation.StopDebugData();
-			shmCommunicator.shutdown();
+			//shmCommunicator.shutdown();
 			VR_CLEANUP_SERVER_DRIVER_CONTEXT();
 		}
 
 		// Call frequency: ~93Hz
-		void ServerDriver::RunFrame()
-		{
+		void ServerDriver::RunFrame(){
+			//LOG(INFO) << UDPSocket->lastReceivedMessage;
 
+			// this is HMD
+			//if (deviceActivated[0]) {
+			//	auto m_handle = this->getDeviceManipulationHandleById(0);
+			//	m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			//}
+			if (deviceActivated[1]) {
+				auto m_handle = this->getDeviceManipulationHandleById(1);
+				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			}
+			if (deviceActivated[2]) {
+				auto m_handle = this->getDeviceManipulationHandleById(2);
+				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			}
+
+			//the others should be controllers. (0,1)
+
+			// m_handle = this->getDeviceManipulationHandleById(1);
+			// if(m_handle){
+			// 	m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			// }
+			
+			// auto m_handle1 = this->getDeviceManipulationHandleById(1);
+			// auto m_handle2 = this->getDeviceManipulationHandleById(2);
+
+			// m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			// m_handle1->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			// m_handle2->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			std::string msg = UDPSocket->getLastMessage();
+			LOG(INFO) << "Jotaro: last message = " << msg;
+			if (msg != "") {
+				nlohmann::json j;
+				
+			}
 		}
 
 		DeviceManipulationHandle* ServerDriver::getDeviceManipulationHandleById(uint32_t unWhichDevice)
 		{
-			LOG(TRACE) << "getDeviceByID: unWhichDevice: " << unWhichDevice;
+			LOG(INFO) << "getDeviceByID: unWhichDevice: " << unWhichDevice;
 
 			std::lock_guard<std::recursive_mutex> lock(_deviceManipulationHandlesMutex);
 
@@ -138,12 +178,12 @@ namespace vrmotioncompensation
 				}
 				else
 				{
-					LOG(ERROR) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is NULL. unWhichDevice: " << unWhichDevice;
+					LOG(INFO) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is NULL. unWhichDevice: " << unWhichDevice;
 				}
 			}
 			else
 			{
-				LOG(ERROR) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is not valid. unWhichDevice: " << unWhichDevice;
+				LOG(INFO) << "_openvrIdDeviceManipulationHandle[unWhichDevice] is not valid. unWhichDevice: " << unWhichDevice;
 			}
 
 			return nullptr;

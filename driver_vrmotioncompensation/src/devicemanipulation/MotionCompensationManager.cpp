@@ -1,7 +1,8 @@
+#include "../driver/ServerDriver.h"
 #include "MotionCompensationManager.h"
 
 #include "DeviceManipulationHandle.h"
-#include "../driver/ServerDriver.h"
+
 
 #include <cmath>
 #include <boost/math/constants/constants.hpp>
@@ -343,6 +344,15 @@ namespace vrmotioncompensation
 
 		bool MotionCompensationManager::applyMotionCompensation(vr::DriverPose_t& pose)
 		{
+			//jotaro: here you implement go-go or other physics model. This function should be called every frame.
+			//jotaro if MotionCompensate mode is true then change pose anyways TODO: change this when doing some inter-system comm
+			if(true){ //statement 'true' should be some thing else when implementing communication or UI stuff.
+				LOG(INFO)<<"jotaro: applyMoCo";
+				pose.vecPosition[0] = pose.vecPosition[1] = pose.vecPosition[2] = 0;
+			} 
+			
+			// below you can ignore.
+
 			if (_Enabled && _ZeroPoseValid && _RefPoseValid)
 			{
 
@@ -424,6 +434,18 @@ namespace vrmotioncompensation
 					_DebugLogger.gotHmd();
 				}
 			}
+			return true;
+		}
+
+		bool MotionCompensationManager::applyGoGo(vr::DriverPose_t& pose){
+			//LOG(INFO) << "jotaro: applyGOGO";
+			_LastPos[0]=pose.vecPosition[0];
+			_LastPos[1]=pose.vecPosition[1];
+			_LastPos[2]=pose.vecPosition[2];
+
+			pose.vecPosition[0] = _GoGoRefPos[0] + (_LastPos[0] - _GoGoRefPos[0]) * _CDRatio[0];
+			pose.vecPosition[1] = _GoGoRefPos[1] + (_LastPos[1] - _GoGoRefPos[1]) * _CDRatio[1];
+			pose.vecPosition[2] = _GoGoRefPos[2] + (_LastPos[2] - _GoGoRefPos[2]) * _CDRatio[2];
 			return true;
 		}
 
