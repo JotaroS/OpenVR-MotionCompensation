@@ -1,4 +1,9 @@
 #pragma once
+#include <boost/timer/timer.hpp>
+#include <boost/chrono/chrono.hpp>
+#include <boost/chrono/system_clocks.hpp>
+#include <boost/interprocess/windows_shared_memory.hpp>
+#include <boost/interprocess/mapped_region.hpp>
 
 #include <openvr_driver.h>
 #include <vrmotioncompensation_types.h>
@@ -6,11 +11,7 @@
 #include "../logging.h"
 #include "Debugger.h"
 
-#include <boost/timer/timer.hpp>
-#include <boost/chrono/chrono.hpp>
-#include <boost/chrono/system_clocks.hpp>
-#include <boost/interprocess/windows_shared_memory.hpp>
-#include <boost/interprocess/mapped_region.hpp>
+
 
 // driver namespace
 namespace vrmotioncompensation

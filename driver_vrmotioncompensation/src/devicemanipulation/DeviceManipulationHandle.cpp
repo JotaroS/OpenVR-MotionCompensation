@@ -1,10 +1,11 @@
+#include "../driver/ServerDriver.h"
 #include "DeviceManipulationHandle.h"
 
-#include "../driver/ServerDriver.h"
+
 #include "../hooks/IVRServerDriverHost004Hooks.h"
 #include "../hooks/IVRServerDriverHost005Hooks.h"
 
-#undef WIN32_LEAN_AND_MEAN
+// #define WIN32_LEAN_AND_MEAN
 #undef NOSOUND
 #include <Windows.h>
 // According to windows documentation mmsystem.h should be automatically included with Windows.h when WIN32_LEAN_AND_MEAN and NOSOUND are not defined

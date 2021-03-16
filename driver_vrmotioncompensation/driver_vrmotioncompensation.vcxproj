@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MyUDPManager.cpp" />
     <ClCompile Include="src\devicemanipulation\Debugger.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\hooks\ITrackedDeviceServerDriver005Hooks.cpp" />
@@ -35,6 +36,7 @@
     <ClCompile Include="src\hooks\IVRServerDriverHost006Hooks.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MyUDPManager.h" />
     <ClInclude Include="src\com\shm\driver_ipc_shm.h" />
     <ClInclude Include="src\devicemanipulation\Debugger.h" />
     <ClInclude Include="src\devicemanipulation\DeviceManipulationHandle.h" />
@@ -195,7 +197,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;DRIVER_VRINPUTEMULATOR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NDEBUG;_WINDOWS;_USRDLL;DRIVER_VRINPUTEMULATOR_EXPORTS;_WIN32_WINNT=0x0A00;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\include\boost-1_72;C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\include;..\third-party\boost_1_72_0;..\lib_vrmotioncompensation\include;$(OPENVR_ROOT)\headers;..\third-party\easylogging++;..\third-party\MinHook\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>Async</ExceptionHandling>

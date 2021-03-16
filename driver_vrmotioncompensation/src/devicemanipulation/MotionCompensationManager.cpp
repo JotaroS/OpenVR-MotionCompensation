@@ -1,7 +1,8 @@
+#include "../driver/ServerDriver.h"
 #include "MotionCompensationManager.h"
 
 #include "DeviceManipulationHandle.h"
-#include "../driver/ServerDriver.h"
+
 
 #include <cmath>
 #include <boost/math/constants/constants.hpp>
@@ -437,7 +438,7 @@ namespace vrmotioncompensation
 		}
 
 		bool MotionCompensationManager::applyGoGo(vr::DriverPose_t& pose){
-			LOG(INFO) << "jotaro: applyGOGO";
+			//LOG(INFO) << "jotaro: applyGOGO";
 			_LastPos[0]=pose.vecPosition[0];
 			_LastPos[1]=pose.vecPosition[1];
 			_LastPos[2]=pose.vecPosition[2];

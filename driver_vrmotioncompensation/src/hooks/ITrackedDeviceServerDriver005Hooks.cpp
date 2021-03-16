@@ -1,6 +1,7 @@
+#include "../driver/ServerDriver.h"
+
 #include "ITrackedDeviceServerDriver005Hooks.h"
 
-#include "../driver/ServerDriver.h"
 
 
 namespace vrmotioncompensation

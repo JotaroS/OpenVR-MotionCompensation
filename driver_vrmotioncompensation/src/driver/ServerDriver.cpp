@@ -1,6 +1,7 @@
+#include "../../MyUDPManager.h"
 #include "ServerDriver.h"
 #include "../devicemanipulation/DeviceManipulationHandle.h"
-
+#include <nlohmann/json.hpp>
 namespace vrmotioncompensation
 {
 	namespace driver
@@ -108,9 +109,11 @@ namespace vrmotioncompensation
 			// Start IPC thread
 			// shmCommunicator.init(this);
 			
-
+			// Start UDP Server
+			UDPSocket = new MyUDPManager();
 			return vr::VRInitError_None;
 		}
+
 
 		void ServerDriver::Cleanup()
 		{
@@ -118,13 +121,14 @@ namespace vrmotioncompensation
 			_driverContextHooks.reset();
 			MH_Uninitialize();
 			m_motionCompensation.StopDebugData();
-			shmCommunicator.shutdown();
+			//shmCommunicator.shutdown();
 			VR_CLEANUP_SERVER_DRIVER_CONTEXT();
 		}
 
 		// Call frequency: ~93Hz
-		void ServerDriver::RunFrame()
-		{
+		void ServerDriver::RunFrame(){
+			//LOG(INFO) << UDPSocket->lastReceivedMessage;
+
 			// this is HMD
 			//if (deviceActivated[0]) {
 			//	auto m_handle = this->getDeviceManipulationHandleById(0);
@@ -152,6 +156,12 @@ namespace vrmotioncompensation
 			// m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
 			// m_handle1->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
 			// m_handle2->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+			std::string msg = UDPSocket->getLastMessage();
+			LOG(INFO) << "Jotaro: last message = " << msg;
+			if (msg != "") {
+				nlohmann::json j;
+				
+			}
 		}
 
 		DeviceManipulationHandle* ServerDriver::getDeviceManipulationHandleById(uint32_t unWhichDevice)

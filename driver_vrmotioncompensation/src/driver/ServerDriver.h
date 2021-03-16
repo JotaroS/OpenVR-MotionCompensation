@@ -1,5 +1,5 @@
 #pragma once
-
+#include "../../MyUDPManager.h"
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -7,7 +7,7 @@
 #include <vrmotioncompensation_types.h>
 #include "../hooks/common.h"
 #include "../logging.h"
-#include "../com/shm/driver_ipc_shm.h"
+//#include "../com/shm/driver_ipc_shm.h"
 #include "../devicemanipulation/MotionCompensationManager.h"
 
 // driver namespace
@@ -38,6 +38,8 @@ namespace vrmotioncompensation
 
 			/** initializes the driver. This will be called before any other methods are called. */
 			virtual vr::EVRInitError Init(vr::IVRDriverContext* pDriverContext) override;
+
+			void InitUDPComm();
 
 			/** cleans up the driver right before it is unloaded */
 			virtual void Cleanup() override;
@@ -92,6 +94,7 @@ namespace vrmotioncompensation
 			void hooksTrackedDeviceAdded(void* serverDriverHost, int version, const char* pchDeviceSerialNumber, vr::ETrackedDeviceClass& eDeviceClass, void* pDriver);
 			void hooksTrackedDeviceActivated(void* serverDriver, int version, uint32_t unObjectId);
 			bool hooksTrackedDevicePoseUpdated(void* serverDriverHost, int version, uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t& unPoseStructSize);
+			MyUDPManager* UDPSocket;
 
 		private:
 			static ServerDriver* singleton;
@@ -99,7 +102,7 @@ namespace vrmotioncompensation
 			static std::string installDir;			
 
 			//// ipc shm related ////
-			IpcShmCommunicator shmCommunicator;
+			//IpcShmCommunicator shmCommunicator;
 
 			//// device manipulation related ////
 			std::recursive_mutex _deviceManipulationHandlesMutex;
