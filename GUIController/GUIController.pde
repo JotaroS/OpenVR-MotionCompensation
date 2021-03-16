@@ -42,7 +42,7 @@ void setup() {
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
      .setRange(0,5.0)
-     .setValue(3.0);
+     .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("z-CD-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
@@ -94,7 +94,7 @@ void setup() {
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
      .setRange(0,5.0)
-     .setValue(3.0);
+     .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("z-CD-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
@@ -164,7 +164,7 @@ JSONObject setObject(){
   return json;
 }
 void draw() {
-  background(200);
+  background(50);
 }
 void saveParams(){
   JSONObject json = setObject();
