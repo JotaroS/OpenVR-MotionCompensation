@@ -164,7 +164,7 @@ JSONObject setObject(){
   return json;
 }
 void draw() {
-  background(200);
+  background(50);
 }
 void saveParams(){
   JSONObject json = setObject();
