@@ -443,9 +443,9 @@ namespace vrmotioncompensation
 			_LastPos[1]=pose.vecPosition[1];
 			_LastPos[2]=pose.vecPosition[2];
 
-			pose.vecPosition[0] = _GoGoRefPos[0] + (_LastPos[0] - _GoGoRefPos[0]) * _CDRatio[0];
-			pose.vecPosition[1] = _GoGoRefPos[1] + (_LastPos[1] - _GoGoRefPos[1]) * _CDRatio[1];
-			pose.vecPosition[2] = _GoGoRefPos[2] + (_LastPos[2] - _GoGoRefPos[2]) * _CDRatio[2];
+			pose.vecPosition[0] = _GoGoRefPos[0] + (_LastPos[0] - _GoGoRefPos[0]) * _CDRatio[0] + _OffsetPos[0];
+			pose.vecPosition[1] = _GoGoRefPos[1] + (_LastPos[1] - _GoGoRefPos[1]) * _CDRatio[1] + _OffsetPos[1];
+			pose.vecPosition[2] = _GoGoRefPos[2] + (_LastPos[2] - _GoGoRefPos[2]) * _CDRatio[2] + _OffsetPos[2];
 			return true;
 		}
 

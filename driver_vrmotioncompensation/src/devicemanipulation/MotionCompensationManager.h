@@ -252,6 +252,7 @@ namespace vrmotioncompensation
 			double _CDRatio[3] = {5.0,5.0,5.0};
 			double _LastPos[3] = {0,0,0};
 			double _OffsetPos[3] = {0,0,0};
+			double _OffsetRot[3] = { 0,0,0 };
 			bool _RefPoseValid = false;
 			int _RefPoseValidCounter = 0;
 		};

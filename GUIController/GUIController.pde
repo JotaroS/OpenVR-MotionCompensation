@@ -10,7 +10,7 @@ final int PORT = 13251;//送信側のポート番号
 String msg = "test_messege";   //UDPで送るコマンド
 
 void setup() {
-  size(700, 700);
+  size(800, 600);
   background(100);
 
   cp5 = new ControlP5(this);
@@ -26,10 +26,18 @@ void setup() {
   cp5.addButton("sendParams")
     .setLabel("Send parameters")
     .setPosition(150,gui_y_offset)
-    .setSize(100, 20); 
+    .setSize(100, 20);
+   cp5.addButton("activateGogo")
+    .setLabel("Activate gogo")
+    .setPosition(300,gui_y_offset)
+    .setSize(100, 20);
+   cp5.addButton("deactivateGogo")
+    .setLabel("Deactivate gogo")
+    .setPosition(450,gui_y_offset)
+    .setSize(100, 20);
    cp5.addButton("saveParams")
     .setLabel("save parameters")
-    .setPosition(300,gui_y_offset)
+    .setPosition(600,gui_y_offset)
     .setSize(100, 20); gui_y_offset+=60;
 
   // left
@@ -52,17 +60,17 @@ void setup() {
   cp5.addSlider("x-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-1000,1000.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("y-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-1000,1000.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("z-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-1000,1000.0)
      .setValue(0);gui_y_offset+=60;
 
   cp5.addSlider("rotx-ofs-l")
@@ -104,17 +112,17 @@ void setup() {
   cp5.addSlider("x-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-1000,1000.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("y-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-1000,1000.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("z-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-1000,1000.0)
      .setValue(0);gui_y_offset+=60;
 
   cp5.addSlider("rotx-ofs-r")
@@ -171,7 +179,14 @@ void saveParams(){
   saveJSONObject(json, "param.json");
   System.out.println("data saved");
 }
-
+void activateGogo(){
+  udp.send("ActivateGoGo", IP, PORT);
+  System.out.println("activate gogo");
+}
+void deactivateGogo(){
+  udp.send("DeactivateGoGo", IP, PORT);
+  System.out.println("deactivate gogo");
+}
 void sendParams(){
   JSONObject json = setObject();
   String str = json.toString();

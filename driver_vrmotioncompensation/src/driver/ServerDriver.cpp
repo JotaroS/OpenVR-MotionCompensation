@@ -126,44 +126,40 @@ namespace vrmotioncompensation
 		}
 
 		// Call frequency: ~93Hz
-		void ServerDriver::RunFrame(){
-			//LOG(INFO) << UDPSocket->lastReceivedMessage;
-
-			// this is HMD
-			//if (deviceActivated[0]) {
-			//	auto m_handle = this->getDeviceManipulationHandleById(0);
-			//	m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
-			//}
-			if (deviceActivated[1]) {
-				auto m_handle = this->getDeviceManipulationHandleById(1);
-				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
-			}
-			if (deviceActivated[2]) {
-				auto m_handle = this->getDeviceManipulationHandleById(2);
-				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
-			}
-
-			//the others should be controllers. (0,1)
-
-			// m_handle = this->getDeviceManipulationHandleById(1);
-			// if(m_handle){
-			// 	m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
-			// }
-			
-			// auto m_handle1 = this->getDeviceManipulationHandleById(1);
-			// auto m_handle2 = this->getDeviceManipulationHandleById(2);
-
-			// m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
-			// m_handle1->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
-			// m_handle2->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+		void ServerDriver::RunFrame() {
+			//below:jotaro code
 			std::string msg = UDPSocket->getLastMessage();
 			LOG(INFO) << "Jotaro: last message = " << msg;
-			if(msg == "SetRefPos"){
+			if (msg == "SetRefPos") {
 				if (deviceActivated[1]) {
 					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos();
 				}
 				if (deviceActivated[2]) {
 					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos();
+				}
+			}
+			else if (msg == "DeactivateGoGo") {
+				if (deviceActivated[1]) {
+					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos();
+					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::Default);
+					m_handle->isGoGoActive = false;
+				}
+				if (deviceActivated[2]) {
+					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos();
+					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::Default);
+					m_handle->isGoGoActive = false;
+				}
+			}
+			else if (msg == "ActivateGoGo") {
+				if (deviceActivated[1]) {
+					auto m_handle = this->getDeviceManipulationHandleById(1);
+					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+					m_handle->isGoGoActive = true;
+				}
+				if (deviceActivated[2]) {
+					auto m_handle = this->getDeviceManipulationHandleById(2);
+					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+					m_handle->isGoGoActive = true;
 				}
 			}
 			else if (msg != "") {
