@@ -72,8 +72,23 @@ namespace vrmotioncompensation
 			}
 
 			void setMotionCompensationDeviceMode(MotionCompensationDeviceMode DeviceMode);
+			void setRefPos(){
+				m_motionCompensationManager.setRefPos();
+			}
+			void setCDRatio(float x, float y, float z){
+				m_motionCompensationManager.setCDRatio(x,y,z);
+			}
+
+			void setOffset(float x, float y, float z){
+				m_motionCompensationManager.setOffset(x,y,z);
+			}
+
+			void setRotOffset(float x, float y, float z){
+				m_motionCompensationManager.setRotOffset(x,y,z);
+			}
 
 			bool handlePoseUpdate(uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t unPoseStructSize);
+			bool isGoGoActive = true;
 
 			//vr::HmdVector3d_t ToEulerAngles(vr::HmdQuaternion_t q);
 		};

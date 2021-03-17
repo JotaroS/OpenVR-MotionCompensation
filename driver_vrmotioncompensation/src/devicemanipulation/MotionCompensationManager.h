@@ -104,6 +104,27 @@ namespace vrmotioncompensation
 
 			void runFrame();
 			bool applyGoGo(vr::DriverPose_t& pose);
+			void setRefPos(){
+				_GoGoRefPos[0] = _LastPos[0];
+				_GoGoRefPos[1] = _LastPos[1];
+				_GoGoRefPos[2] = _LastPos[2];
+			}
+
+			void setCDRatio(double x, double y, double z){
+				_CDRatio[0] = x;
+				_CDRatio[1] = y;
+				_CDRatio[2] = z;
+			}
+			void setOffset(double x, double y, double z){
+				_OffsetPos[0] = x;
+				_OffsetPos[1] = y;
+				_OffsetPos[2] = z;
+			}
+			void setRotOffset(double x, double y, double z){
+				_OffsetRot[0] = x;
+				_OffsetRot[1] = y;
+				_OffsetRot[2] = z;
+			}
 
 		private:
 
@@ -230,6 +251,7 @@ namespace vrmotioncompensation
 			double _GoGoRefPos[3] ={0,0,0};
 			double _CDRatio[3] = {5.0,5.0,5.0};
 			double _LastPos[3] = {0,0,0};
+			double _OffsetPos[3] = {0,0,0};
 			bool _RefPoseValid = false;
 			int _RefPoseValidCounter = 0;
 		};
