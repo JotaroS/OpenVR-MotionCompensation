@@ -86,6 +86,9 @@ namespace vrmotioncompensation
 			void setRotOffset(float x, float y, float z){
 				m_motionCompensationManager.setRotOffset(x,y,z);
 			}
+			void setRotOffsetQuat(float w, float x, float y, float z) {
+				m_motionCompensationManager.setRotOffsetQuat(w, x, y, z);
+			}
 
 			bool handlePoseUpdate(uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t unPoseStructSize);
 			bool isGoGoActive = true;

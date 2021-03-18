@@ -100,17 +100,17 @@ void setup() {
   cp5.addSlider("x-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(-1000,1000.0)
+     .setRange(-1,1.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("y-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(-1000,1000.0)
+     .setRange(-1,1.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("z-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(-1000,1000.0)
+     .setRange(-1,1.0)
      .setValue(0);gui_y_offset+=60;
 
   cp5.addSlider("rotx-ofs-l")
@@ -152,17 +152,17 @@ void setup() {
   cp5.addSlider("x-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(-1000,1000.0)
+     .setRange(-1,1.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("y-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(-1000,1000.0)
+     .setRange(-1,1.0)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("z-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(-1000,1000.0)
+     .setRange(-1,1.0)
      .setValue(0);gui_y_offset+=60;
 
   cp5.addSlider("rotx-ofs-r")

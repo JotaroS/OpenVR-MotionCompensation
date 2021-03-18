@@ -169,12 +169,14 @@ namespace vrmotioncompensation
 					m_handle->setCDRatio(j["x-CD-r"], j["y-CD-r"], j["z-CD-r"]);
 					m_handle->setOffset(j["x-ofs-r"], j["y-ofs-r"], j["z-ofs-r"]);
 					m_handle->setRotOffset(j["rotx-ofs-r"], j["roty-ofs-r"], j["rotz-ofs-r"]);
+					m_handle->setRotOffsetQuat(j["qw-ofs-r"], j["qx-ofs-r"], j["qy-ofs-r"], j["qz-ofs-r"]);
 				}
 				if (deviceActivated[2]) {
 					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos();
 					m_handle->setCDRatio(j["x-CD-l"], j["y-CD-l"], j["z-CD-l"]);
 					m_handle->setOffset(j["x-ofs-l"], j["y-ofs-l"], j["z-ofs-l"]);
 					m_handle->setRotOffset(j["rotx-ofs-l"], j["roty-ofs-l"], j["rotz-ofs-l"]);
+					m_handle->setRotOffsetQuat(j["qw-ofs-l"], j["qx-ofs-l"], j["qy-ofs-l"], j["qz-ofs-l"]);
 				}
 			}
 		}

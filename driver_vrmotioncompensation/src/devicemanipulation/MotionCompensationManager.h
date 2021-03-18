@@ -125,6 +125,19 @@ namespace vrmotioncompensation
 				_OffsetRot[1] = y;
 				_OffsetRot[2] = z;
 			}
+			void setRotOffsetQuat(double w, double x, double y, double z) {
+				_OffsetQuat.w = w;
+				_OffsetQuat.x = x;
+				_OffsetQuat.y = y;
+				_OffsetQuat.z = z;
+			}
+			vr::HmdQuad_t applyRotByQuat(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2) {
+				vr::HmdQuaternion_t ret;
+				ret.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+				ret.x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+				ret.y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
+				ret.z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
+			}
 
 		private:
 
@@ -253,6 +266,7 @@ namespace vrmotioncompensation
 			double _LastPos[3] = {0,0,0};
 			double _OffsetPos[3] = {0,0,0};
 			double _OffsetRot[3] = { 0,0,0 };
+			vr::HmdQuaternion_t _OffsetQuat = { 0,0,0,0 };
 			bool _RefPoseValid = false;
 			int _RefPoseValidCounter = 0;
 		};
