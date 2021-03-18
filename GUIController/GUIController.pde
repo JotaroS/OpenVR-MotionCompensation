@@ -8,6 +8,46 @@ final String IP = "127.0.0.1";
 final int PORT = 13251;//送信側のポート番号
 
 String msg = "test_messege";   //UDPで送るコマンド
+class Quaternion{
+   float w,x,y,z;
+   Quaternion(){
+      this.w = 1.0;
+      this.x = this.y = this.z = 0.0;
+   }
+   Quaternion(float yaw, float pitch, float roll){
+      float cy = cos(yaw * 0.5);
+      float sy = sin(yaw * 0.5);
+      float cp = cos(pitch * 0.5);
+      float sp = sin(pitch * 0.5);
+      float cr = cos(roll * 0.5);
+      float sr = sin(roll * 0.5);
+      this.w = cr * cp * cy + sr * sp * sy;
+      this.x = sr * cp * cy - cr * sp * sy;
+      this.y = cr * sp * cy + sr * cp * sy;
+      this.z = cr * cp * sy - sr * sp * cy;
+   }
+   Quaternion ToQuaternion(float yaw, float pitch, float roll) // yaw (Z), pitch (Y), roll (X)
+   {
+    // Abbreviations for the various angular functions
+   
+    float cy = cos(yaw * 0.5);
+    float sy = sin(yaw * 0.5);
+    float cp = cos(pitch * 0.5);
+    float sp = sin(pitch * 0.5);
+    float cr = cos(roll * 0.5);
+    float sr = sin(roll * 0.5);
+
+   Quaternion q = new Quaternion();
+    q.w = cr * cp * cy + sr * sp * sy;
+    q.x = sr * cp * cy - cr * sp * sy;
+    q.y = cr * sp * cy + sr * cp * sy;
+    q.z = cr * cp * sy - sr * sp * cy;
+    return q;
+   }
+   String ToString(){
+      return "q:(w,x,y,z) = ("+this.w + "," + this.x + "," + this.y + "," + this.z +")";
+   }
+};
 
 void setup() {
   size(800, 600);
@@ -76,17 +116,17 @@ void setup() {
   cp5.addSlider("rotx-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-PI,PI)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("roty-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-PI,PI)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("rotz-ofs-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-PI,PI)
      .setValue(0);gui_y_offset+=30;
 
   gui_x_offset = 400;
@@ -128,17 +168,17 @@ void setup() {
   cp5.addSlider("rotx-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-PI,PI)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("roty-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-PI,PI)
      .setValue(0);gui_y_offset+=30;
   cp5.addSlider("rotz-ofs-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,1000.0)
+     .setRange(-PI,PI)
      .setValue(0);gui_y_offset+=30;
 }
 
@@ -153,9 +193,17 @@ JSONObject setObject(){
   json.setFloat("x-ofs-l",cp5.getController("x-ofs-l").getValue());
   json.setFloat("y-ofs-l",cp5.getController("y-ofs-l").getValue());
   json.setFloat("z-ofs-l",cp5.getController("z-ofs-l").getValue());
+
+  Quaternion q = new Quaternion( cp5.getController("rotz-ofs-l").getValue(),
+                                 cp5.getController("roty-ofs-l").getValue(),
+                                 cp5.getController("rotx-ofs-l").getValue());
   json.setFloat("rotx-ofs-l",cp5.getController("rotx-ofs-l").getValue());
   json.setFloat("roty-ofs-l",cp5.getController("roty-ofs-l").getValue());
   json.setFloat("rotz-ofs-l",cp5.getController("rotz-ofs-l").getValue());
+  json.setFloat("qw-ofs-l", q.w);
+  json.setFloat("qx-ofs-l", q.x);
+  json.setFloat("qy-ofs-l", q.y);
+  json.setFloat("qz-ofs-l", q.z);
 
   json.setFloat("x-CD-r",cp5.getController("x-CD-r").getValue());
   json.setFloat("y-CD-r",cp5.getController("y-CD-r").getValue());
@@ -167,12 +215,34 @@ JSONObject setObject(){
   json.setFloat("roty-ofs-r",cp5.getController("roty-ofs-r").getValue());
   json.setFloat("rotz-ofs-r",cp5.getController("rotz-ofs-r").getValue());
 
+  q = new Quaternion( cp5.getController("rotz-ofs-r").getValue(),
+                                 cp5.getController("roty-ofs-r").getValue(),
+                                 cp5.getController("rotx-ofs-r").getValue());
+  json.setFloat("rotx-ofs-r",cp5.getController("rotx-ofs-r").getValue());
+  json.setFloat("roty-ofs-r",cp5.getController("roty-ofs-r").getValue());
+  json.setFloat("rotz-ofs-r",cp5.getController("rotz-ofs-r").getValue());
+  json.setFloat("qw-ofs-r", q.w);
+  json.setFloat("qx-ofs-r", q.x);
+  json.setFloat("qy-ofs-r", q.y);
+  json.setFloat("qz-ofs-r", q.z);
+
   String str = json.toString();
   System.out.println(str);
   return json;
 }
 void draw() {
   background(50);
+  Quaternion q = new Quaternion( cp5.getController("rotz-ofs-l").getValue(),
+                                 cp5.getController("roty-ofs-l").getValue(),
+                                 cp5.getController("rotx-ofs-l").getValue());
+   
+  text(q.ToString(), 10,500);
+
+  q = new Quaternion( cp5.getController("rotz-ofs-r").getValue(),
+                                 cp5.getController("roty-ofs-r").getValue(),
+                                 cp5.getController("rotx-ofs-r").getValue());
+   
+  text(q.ToString(), 10,530);
 }
 void saveParams(){
   JSONObject json = setObject();
