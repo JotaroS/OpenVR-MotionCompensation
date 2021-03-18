@@ -437,16 +437,46 @@ namespace vrmotioncompensation
 			return true;
 		}
 
-		bool MotionCompensationManager::applyGoGo(vr::DriverPose_t& pose){
+		bool MotionCompensationManager::applyGoGo(vr::DriverPose_t& pose) {
 			//LOG(INFO) << "jotaro: applyGOGO";
-			_LastPos[0]=pose.vecPosition[0];
-			_LastPos[1]=pose.vecPosition[1];
-			_LastPos[2]=pose.vecPosition[2];
+			_LastPos[0][0] = pose.vecPosition[0];
+			_LastPos[0][1] = pose.vecPosition[1];
+			_LastPos[0][2] = pose.vecPosition[2];
 
-			pose.vecPosition[0] = _GoGoRefPos[0] + (_LastPos[0] - _GoGoRefPos[0]) * _CDRatio[0] + _OffsetPos[0];
-			pose.vecPosition[1] = _GoGoRefPos[1] + (_LastPos[1] - _GoGoRefPos[1]) * _CDRatio[1] + _OffsetPos[1];
-			pose.vecPosition[2] = _GoGoRefPos[2] + (_LastPos[2] - _GoGoRefPos[2]) * _CDRatio[2] + _OffsetPos[2];
+			pose.vecPosition[0] = _GoGoRefPos[0][0] + (_LastPos[0][0] - _GoGoRefPos[0][0]) * _CDRatio[0][0] + _OffsetPos[0][0];
+			pose.vecPosition[1] = _GoGoRefPos[0][1] + (_LastPos[0][1] - _GoGoRefPos[0][1]) * _CDRatio[0][1] + _OffsetPos[0][1];
+			pose.vecPosition[2] = _GoGoRefPos[0][2] + (_LastPos[0][2] - _GoGoRefPos[0][2]) * _CDRatio[0][2] + _OffsetPos[0][2];
+
+			applyRotByQuat(&pose.qRotation, _OffsetQuat[0]);
+
+			pose.vecPosition[2] += _triggerPunchOffset[0] * _punchDist[0]; //[0.0, 1.0] * _punchDist. TODO: thrust toward HMD forward.
+
 			return true;
+		}
+
+		bool MotionCompensationManager::applyGoGo1(vr::DriverPose_t& pose) {
+			//LOG(INFO) << "jotaro: applyGOGO";
+			_LastPos[1][0] = pose.vecPosition[0];
+			_LastPos[1][1] = pose.vecPosition[1];
+			_LastPos[1][2] = pose.vecPosition[2];
+
+			pose.vecPosition[0] = _GoGoRefPos[1][0] + (_LastPos[1][0] - _GoGoRefPos[1][0]) * _CDRatio[1][0] + _OffsetPos[1][0];
+			pose.vecPosition[1] = _GoGoRefPos[1][1] + (_LastPos[1][1] - _GoGoRefPos[1][1]) * _CDRatio[1][1] + _OffsetPos[1][1];
+			pose.vecPosition[2] = _GoGoRefPos[1][2] + (_LastPos[1][2] - _GoGoRefPos[1][2]) * _CDRatio[1][2] + _OffsetPos[1][2];
+
+			applyRotByQuat(&pose.qRotation, _OffsetQuat[1]);
+
+			pose.vecPosition[2] += _triggerPunchOffset[1] * _punchDist[1]; //[0.0, 1.0] * _punchDist. TODO: thrust toward HMD forward.
+
+			return true;
+		}
+
+		void MotionCompensationManager::setPunchDist(float val,int idx) {
+			_punchDist[idx]=val;
+		}
+
+		void MotionCompensationManager::setPunchTriggerOffset(float val,int idx) {
+			_triggerPunchOffset[idx] = val;
 		}
 
 		void MotionCompensationManager::runFrame()

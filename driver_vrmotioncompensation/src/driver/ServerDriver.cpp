@@ -2,6 +2,8 @@
 #include "ServerDriver.h"
 #include "../devicemanipulation/DeviceManipulationHandle.h"
 #include <nlohmann/json.hpp>
+
+
 namespace vrmotioncompensation
 {
 	namespace driver
@@ -53,7 +55,13 @@ namespace vrmotioncompensation
 			_deviceManipulationHandles.insert({ pDriver, handle });
 
 			// Hook into server driver interface
-			handle->setServerDriverHooks(InterfaceHooks::hookInterface(pDriver, "ITrackedDeviceServerDriver_005"));
+			if (!firstTrackerActivated) {
+				handle->setServerDriverHooks(InterfaceHooks::hookInterface(pDriver, "ITrackedDeviceServerDriver_005"));
+				firstTrackerActivated = true;
+			}
+			else {
+				handle->setServerDriverHooks(InterfaceHooks::hookInterface(pDriver, "ITrackedDeviceServerDriver_004"));
+			}
 		}
 
 		void ServerDriver::hooksTrackedDeviceActivated(void* serverDriver, int version, uint32_t unObjectId)
@@ -127,58 +135,96 @@ namespace vrmotioncompensation
 
 		// Call frequency: ~93Hz
 		void ServerDriver::RunFrame() {
-			//below:jotaro code
+			// handle GamePad input
+			
+			if (!gamepad.Refresh())
+			{
+				if (wasConnected)
+				{
+					wasConnected = false;
+					LOG(INFO) << "Please connect an Xbox 360 controller.";
+				}
+			}
+			else
+			{
+				if (!wasConnected)
+				{
+					wasConnected = true;
+					LOG(INFO) << "Controller connected on port " << gamepad.GetPort();
+				}
+				//LOG(INFO) << "Left thumb stick: (" << gamepad.leftStickX << ", " << gamepad.leftStickY << ")   Right thumb stick : (" << gamepad.rightStickX << ", " << gamepad.rightStickY << ")";
+				//LOG(INFO) << "Left analog trigger: " << gamepad.leftTrigger << "   Right analog trigger: " << gamepad.rightTrigger;
+
+				//if (gamepad.IsPressed(XINPUT_GAMEPAD_A))
+				//	LOG(INFO) << "(A) button pressed";
+			}
+
+			// handle UDP message from GUIController.
 			std::string msg = UDPSocket->getLastMessage();
 			LOG(INFO) << "Jotaro: last message = " << msg;
 			if (msg == "SetRefPos") {
 				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos();
+					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos(0);
 				}
 				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos();
+					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos(1);
 				}
 			}
 			else if (msg == "DeactivateGoGo") {
 				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos();
+					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos(0);
 					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::Default);
 					m_handle->isGoGoActive = false;
 				}
 				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos();
+					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos(1);
 					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::Default);
 					m_handle->isGoGoActive = false;
 				}
 			}
 			else if (msg == "ActivateGoGo") {
 				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1);
-					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
+					auto m_handle = this->getDeviceManipulationHandleById(1);  m_handle->setRefPos(0);
+					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated1);
 					m_handle->isGoGoActive = true;
 				}
 				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2);
+					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos(1);
 					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
 					m_handle->isGoGoActive = true;
 				}
 			}
+			// this runs every 50ms.
 			else if (msg != "") {
 				auto j = nlohmann::json::parse(msg);
 				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos();
-					m_handle->setCDRatio(j["x-CD-r"], j["y-CD-r"], j["z-CD-r"]);
-					m_handle->setOffset(j["x-ofs-r"], j["y-ofs-r"], j["z-ofs-r"]);
-					m_handle->setRotOffset(j["rotx-ofs-r"], j["roty-ofs-r"], j["rotz-ofs-r"]);
-					m_handle->setRotOffsetQuat(j["qw-ofs-r"], j["qx-ofs-r"], j["qy-ofs-r"], j["qz-ofs-r"]);
+					auto m_handle = this->getDeviceManipulationHandleById(1);
+					m_handle->setCDRatio(j["x-CD-r"], j["y-CD-r"], j["z-CD-r"],0);
+					m_handle->setOffset(j["x-ofs-r"], j["y-ofs-r"], j["z-ofs-r"],0);
+					m_handle->setRotOffset(j["rotx-ofs-r"], j["roty-ofs-r"], j["rotz-ofs-r"],0);
+					m_handle->setRotOffsetQuat(j["qw-ofs-r"], j["qx-ofs-r"], j["qy-ofs-r"], j["qz-ofs-r"],0);
+					m_handle->setPunchDist(j["punch_dist"],0);
 				}
 				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos();
-					m_handle->setCDRatio(j["x-CD-l"], j["y-CD-l"], j["z-CD-l"]);
-					m_handle->setOffset(j["x-ofs-l"], j["y-ofs-l"], j["z-ofs-l"]);
-					m_handle->setRotOffset(j["rotx-ofs-l"], j["roty-ofs-l"], j["rotz-ofs-l"]);
-					m_handle->setRotOffsetQuat(j["qw-ofs-l"], j["qx-ofs-l"], j["qy-ofs-l"], j["qz-ofs-l"]);
+					auto m_handle = this->getDeviceManipulationHandleById(2);
+					m_handle->setCDRatio(j["x-CD-l"], j["y-CD-l"], j["z-CD-l"], 1);
+					m_handle->setOffset(j["x-ofs-l"], j["y-ofs-l"], j["z-ofs-l"], 1);
+					m_handle->setRotOffset(j["rotx-ofs-l"], j["roty-ofs-l"], j["rotz-ofs-l"], 1);
+					m_handle->setRotOffsetQuat(j["qw-ofs-l"], j["qx-ofs-l"], j["qy-ofs-l"], j["qz-ofs-l"], 1);
+					m_handle->setPunchDist(j["punch_dist"], 1);
 				}
 			}
+			//punching / reaching 'controller' condition
+			//this runs every frame.
+			{
+				if (deviceActivated[1]) {
+					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setPunchTriggerOffset(gamepad.rightTrigger,0);
+				}
+				if (deviceActivated[2]) {
+					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setPunchTriggerOffset(gamepad.leftTrigger,1);
+				}
+			}
+
 		}
 
 		DeviceManipulationHandle* ServerDriver::getDeviceManipulationHandleById(uint32_t unWhichDevice)

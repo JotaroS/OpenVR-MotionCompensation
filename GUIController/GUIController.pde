@@ -7,6 +7,9 @@ ControlP5 cp5;
 final String IP = "127.0.0.1";
 final int PORT = 13251;//送信側のポート番号
 
+int timer = 0;
+
+int send_intval=50; //every X-ms the parameters are sent to the server.
 String msg = "test_messege";   //UDPで送るコマンド
 class Quaternion{
    float w,x,y,z;
@@ -84,17 +87,17 @@ void setup() {
   cp5.addSlider("x-CD-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,5.0)
+     .setRange(1,5.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("y-CD-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,5.0)
+     .setRange(1,5.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("z-CD-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,5.0)
+     .setRange(1,5.0)
      .setValue(3.0);gui_y_offset+=60;
 
   cp5.addSlider("x-ofs-l")
@@ -136,17 +139,17 @@ void setup() {
   cp5.addSlider("x-CD-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,5.0)
+     .setRange(1,5.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("y-CD-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,5.0)
+     .setRange(1,5.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("z-CD-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0,5.0)
+     .setRange(1,5.0)
      .setValue(3.0);gui_y_offset+=60;
 
   cp5.addSlider("x-ofs-r")
@@ -179,6 +182,11 @@ void setup() {
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
      .setRange(-PI,PI)
+     .setValue(0);gui_y_offset+=50;
+  cp5.addSlider("punch_dist")
+     .setPosition(gui_x_offset,gui_y_offset)
+     .setSize(200,20)
+     .setRange(0.0,1.0)
      .setValue(0);gui_y_offset+=30;
 }
 
@@ -225,6 +233,7 @@ JSONObject setObject(){
   json.setFloat("qx-ofs-r", q.x);
   json.setFloat("qy-ofs-r", q.y);
   json.setFloat("qz-ofs-r", q.z);
+  json.setFloat("punch_dist", cp5.getController("punch_dist").getValue());
 
   String str = json.toString();
   System.out.println(str);
@@ -243,6 +252,12 @@ void draw() {
                                  cp5.getController("rotx-ofs-r").getValue());
    
   text(q.ToString(), 10,530);
+  
+  if(millis()-timer>=send_intval){
+    sendParams();
+    timer = millis();
+  }
+  
 }
 void saveParams(){
   JSONObject json = setObject();

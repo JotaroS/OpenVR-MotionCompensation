@@ -1,3 +1,4 @@
+#pragma once
 #include "../driver/ServerDriver.h"
 #include "IVRServerDriverHost005Hooks.h"
 

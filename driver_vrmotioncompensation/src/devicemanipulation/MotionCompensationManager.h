@@ -104,40 +104,50 @@ namespace vrmotioncompensation
 
 			void runFrame();
 			bool applyGoGo(vr::DriverPose_t& pose);
-			void setRefPos(){
-				_GoGoRefPos[0] = _LastPos[0];
-				_GoGoRefPos[1] = _LastPos[1];
-				_GoGoRefPos[2] = _LastPos[2];
+			bool applyGoGo1(vr::DriverPose_t& pose);
+			void setPunchDist(float val, int idx);
+			void setPunchTriggerOffset(float val,int idx);
+			void setRefPos(int idx){
+				_GoGoRefPos[idx][0] = _LastPos[idx][0];
+				_GoGoRefPos[idx][1] = _LastPos[idx][1];
+				_GoGoRefPos[idx][2] = _LastPos[idx][2];
 			}
 
-			void setCDRatio(double x, double y, double z){
-				_CDRatio[0] = x;
-				_CDRatio[1] = y;
-				_CDRatio[2] = z;
+			void setCDRatio(double x, double y, double z, int idx){
+				_CDRatio[idx][0] = x;
+				_CDRatio[idx][1] = y;
+				_CDRatio[idx][2] = z;
 			}
-			void setOffset(double x, double y, double z){
-				_OffsetPos[0] = x;
-				_OffsetPos[1] = y;
-				_OffsetPos[2] = z;
+			void setOffset(double x, double y, double z, int idx){
+				_OffsetPos[idx][0] = x;
+				_OffsetPos[idx][1] = y;
+				_OffsetPos[idx][2] = z;
 			}
-			void setRotOffset(double x, double y, double z){
-				_OffsetRot[0] = x;
-				_OffsetRot[1] = y;
-				_OffsetRot[2] = z;
+			void setRotOffset(double x, double y, double z, int idx){
+				_OffsetRot[idx][0] = x;
+				_OffsetRot[idx][1] = y;
+				_OffsetRot[idx][2] = z;
 			}
-			void setRotOffsetQuat(double w, double x, double y, double z) {
-				_OffsetQuat.w = w;
-				_OffsetQuat.x = x;
-				_OffsetQuat.y = y;
-				_OffsetQuat.z = z;
+			void setRotOffsetQuat(double w, double x, double y, double z, int idx) {
+				_OffsetQuat[idx].w = w;
+				_OffsetQuat[idx].x = x;
+				_OffsetQuat[idx].y = y;
+				_OffsetQuat[idx].z = z;
 			}
-			vr::HmdQuad_t applyRotByQuat(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2) {
+			void applyRotByQuat(vr::HmdQuaternion_t* q1, vr::HmdQuaternion_t q2) {
 				vr::HmdQuaternion_t ret;
-				ret.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
-				ret.x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
-				ret.y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
-				ret.z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
+				ret.w = q1->w * q2.w - q1->x * q2.x - q1->y * q2.y - q1->z * q2.z;
+				ret.x = q1->w * q2.x + q1->x * q2.w + q1->y * q2.z - q1->z * q2.y;
+				ret.y = q1->w * q2.y - q1->x * q2.z + q1->y * q2.w + q1->z * q2.x;
+				ret.z = q1->w * q2.z + q1->x * q2.y - q1->y * q2.x + q1->z * q2.w;
+
+				q1->w = ret.w;
+				q1->x = ret.x;
+				q1->y = ret.y;
+				q1->z = ret.z;
+
 			}
+			
 
 		private:
 
@@ -169,6 +179,12 @@ namespace vrmotioncompensation
 			vr::HmdVector3d_t transform(vr::HmdQuaternion_t quat, vr::HmdVector3d_t VecPosition, vr::HmdVector3d_t point);
 
 			vr::HmdVector3d_t transform(vr::HmdVector3d_t VecRotation, vr::HmdVector3d_t VecPosition, vr::HmdVector3d_t centerOfRotation, vr::HmdVector3d_t point);
+
+			
+
+			vr::HmdQuaternion_t _OffsetQuat[2] = { { 1,0,0,0 },{ 1, 0, 0, 0 } }; //q(w,x,y,z)
+			bool _RefPoseValid = false;
+			int _RefPoseValidCounter = 0;
 
 			std::string _vecToStr(char* name, vr::HmdVector3d_t & v)
 			{
@@ -261,14 +277,14 @@ namespace vrmotioncompensation
 			vr::HmdVector3d_t _RefRotVel = { 0, 0, 0 };
 			vr::HmdVector3d_t _RefRotAcc = { 0, 0, 0 };
 
-			double _GoGoRefPos[3] ={0,0,0};
-			double _CDRatio[3] = {5.0,5.0,5.0};
-			double _LastPos[3] = {0,0,0};
-			double _OffsetPos[3] = {0,0,0};
-			double _OffsetRot[3] = { 0,0,0 };
-			vr::HmdQuaternion_t _OffsetQuat = { 0,0,0,0 };
-			bool _RefPoseValid = false;
-			int _RefPoseValidCounter = 0;
+			double _GoGoRefPos[2][3] = { { 0,0,0 },{0,0,0} };
+			double _CDRatio[2][3] = { { 5.0,5.0,5.0 },{5.0,5.0,5.0} };
+			double _LastPos[2][3] = {{ 0,0,0 },{0,0,0}};
+			double _OffsetPos[2][3] = {{ 0,0,0 },{0,0,0}};
+			double _OffsetRot[2][3] = {{ 0,0,0 },{0,0,0}};
+			double _triggerPunchOffset[2] = { 0.0f,0.0 };
+			double _punchDist[2] = { 0.1f,0.1f };
+			
 		};
 	}
 }

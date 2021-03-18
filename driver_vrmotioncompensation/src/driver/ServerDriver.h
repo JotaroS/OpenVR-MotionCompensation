@@ -9,8 +9,7 @@
 #include "../logging.h"
 //#include "../com/shm/driver_ipc_shm.h"
 #include "../devicemanipulation/MotionCompensationManager.h"
-
-// driver namespace
+#include "../../MyGamepad.h"
 namespace vrmotioncompensation
 {
 	namespace driver
@@ -95,6 +94,7 @@ namespace vrmotioncompensation
 			void hooksTrackedDeviceActivated(void* serverDriver, int version, uint32_t unObjectId);
 			bool hooksTrackedDevicePoseUpdated(void* serverDriverHost, int version, uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t& unPoseStructSize);
 			MyUDPManager* UDPSocket;
+			MyGamepad gamepad;
 
 		private:
 			static ServerDriver* singleton;
@@ -117,6 +117,10 @@ namespace vrmotioncompensation
 			std::shared_ptr<InterfaceHooks> _driverContextHooks;
 
 			bool deviceActivated[3] = { false, false, false }; //hmd, left, right
+			bool firstTrackerActivated = false;
+			
+		
+			bool wasConnected = true;
 		};
 	} // end namespace driver
 } // end namespace vrmotioncompensation

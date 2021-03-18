@@ -72,23 +72,20 @@ namespace vrmotioncompensation
 			}
 
 			void setMotionCompensationDeviceMode(MotionCompensationDeviceMode DeviceMode);
-			void setRefPos(){
-				m_motionCompensationManager.setRefPos();
-			}
-			void setCDRatio(float x, float y, float z){
-				m_motionCompensationManager.setCDRatio(x,y,z);
-			}
 
-			void setOffset(float x, float y, float z){
-				m_motionCompensationManager.setOffset(x,y,z);
-			}
+			void setRefPos(int idx);
 
-			void setRotOffset(float x, float y, float z){
-				m_motionCompensationManager.setRotOffset(x,y,z);
-			}
-			void setRotOffsetQuat(float w, float x, float y, float z) {
-				m_motionCompensationManager.setRotOffsetQuat(w, x, y, z);
-			}
+			void setCDRatio(float x, float y, float z, int idx);
+
+			void setOffset(float x, float y, float z, int idx);
+
+			void setRotOffset(float x, float y, float z, int idx);
+
+			void setRotOffsetQuat(float w, float x, float y, float z, int idx);
+
+			void setPunchTriggerOffset(double val, int idx);
+
+			void setPunchDist(double val, int idx);
 
 			bool handlePoseUpdate(uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t unPoseStructSize);
 			bool isGoGoActive = true;

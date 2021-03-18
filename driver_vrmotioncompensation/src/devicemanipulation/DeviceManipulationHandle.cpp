@@ -4,6 +4,7 @@
 
 #include "../hooks/IVRServerDriverHost004Hooks.h"
 #include "../hooks/IVRServerDriverHost005Hooks.h"
+#include "../hooks/IVRServerDriverHost006Hooks.h"
 
 // #define WIN32_LEAN_AND_MEAN
 #undef NOSOUND
@@ -55,14 +56,46 @@ namespace vrmotioncompensation
 					m_motionCompensationManager.applyGoGo(newPose);
 				}
 			}
+			else if (m_deviceMode == MotionCompensationDeviceMode::MotionCompensated1)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGoGo1(newPose);
+				}
+			}
 
 			return true;
 		}
 
 		void DeviceManipulationHandle::setMotionCompensationDeviceMode(MotionCompensationDeviceMode DeviceMode)
 		{
-			LOG(INFO) << "Jotaro: setting motion compensation device mode as " << (int)DeviceMode;
+			LOG(INFO) << "Jotaro: setting motion compensation device mode as " << (int)DeviceMode <<" for device" << m_openvrId <<":"<<m_serialNumber;
 			m_deviceMode = DeviceMode;
+		}
+
+		void DeviceManipulationHandle::setRefPos(int idx) {
+			m_motionCompensationManager.setRefPos(idx);
+		}
+		void DeviceManipulationHandle::setCDRatio(float x, float y, float z, int idx) {
+			m_motionCompensationManager.setCDRatio(x, y, z, idx);
+		}
+
+		void DeviceManipulationHandle::setOffset(float x, float y, float z, int idx) {
+			m_motionCompensationManager.setOffset(x, y, z, idx);
+		}
+
+		void DeviceManipulationHandle::setRotOffset(float x, float y, float z, int idx) {
+			m_motionCompensationManager.setRotOffset(x, y, z, idx);
+		}
+		void DeviceManipulationHandle::setRotOffsetQuat(float w, float x, float y, float z, int idx) {
+			m_motionCompensationManager.setRotOffsetQuat(w, x, y, z, idx);
+		}
+		void DeviceManipulationHandle::setPunchTriggerOffset(double val, int idx) {
+			m_motionCompensationManager.setPunchTriggerOffset(val, idx);
+		}
+		void DeviceManipulationHandle::setPunchDist(double val, int idx) {
+			m_motionCompensationManager.setPunchDist(val, idx);
 		}
 	} // end namespace driver
 } // end namespace vrmotioncompensation
