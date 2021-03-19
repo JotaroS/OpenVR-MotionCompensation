@@ -48,7 +48,7 @@ class Quaternion{
     return q;
    }
    String ToString(){
-      return "q:(w,x,y,z) = ("+this.w + "," + this.x + "," + this.y + "," + this.z +")";
+      return "quat:(w,x,y,z) = ("+this.w + "," + this.x + "," + this.y + "," + this.z +")";
    }
 };
 
@@ -187,7 +187,7 @@ void setup() {
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
      .setRange(0.0,1.0)
-     .setValue(0);gui_y_offset+=30;
+     .setValue(0.6);gui_y_offset+=30;
 }
 
 JSONObject setObject(){
@@ -252,6 +252,8 @@ void draw() {
                                  cp5.getController("rotx-ofs-r").getValue());
    
   text(q.ToString(), 10,530);
+  
+  text("UDP addr:port "+IP+":"+PORT, 10,560);
   
   if(millis()-timer>=send_intval){
     sendParams();

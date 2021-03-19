@@ -102,6 +102,8 @@ namespace vrmotioncompensation
 			
 			bool applyMotionCompensation(vr::DriverPose_t& pose);
 
+			bool applyGoGo(vr::DriverPose_t& pose, int idx);
+
 			void runFrame();
 			bool applyGoGo(vr::DriverPose_t& pose);
 			bool applyGoGo1(vr::DriverPose_t& pose);
