@@ -11,6 +11,8 @@ int timer = 0;
 
 int send_intval=50; //every X-ms the parameters are sent to the server.
 String msg = "test_messege";   //UDPで送るコマンド
+Toggle c_symmetric;
+Textfield c_filename;
 class Quaternion{
    float w,x,y,z;
    Quaternion(){
@@ -53,7 +55,7 @@ class Quaternion{
 };
 
 void setup() {
-  size(800, 600);
+  size(1000, 600);
   background(100);
 
   cp5 = new ControlP5(this);
@@ -81,7 +83,16 @@ void setup() {
    cp5.addButton("saveParams")
     .setLabel("save parameters")
     .setPosition(600,gui_y_offset)
-    .setSize(100, 20); gui_y_offset+=60;
+    .setSize(100, 20);
+   c_filename = cp5.addTextfield("filename")
+    .setLabel("as")
+    .setPosition(600, gui_y_offset+20)
+    .setSize(100, 20);
+   c_symmetric=cp5.addToggle("symmetric")
+    .setLabel("symmetric (bound to left)")
+    .setPosition(750, gui_y_offset)
+    .setSize(80,20);
+    gui_y_offset+=80;
 
   // left
   cp5.addSlider("x-CD-l")
@@ -133,7 +144,7 @@ void setup() {
      .setValue(0);gui_y_offset+=30;
 
   gui_x_offset = 400;
-  gui_y_offset = 70;
+  gui_y_offset = 80;
 
   // right
   cp5.addSlider("x-CD-r")
@@ -259,11 +270,34 @@ void draw() {
     sendParams();
     timer = millis();
   }
-  
+  resolveSymmetric();
 }
+
+void resolveSymmetric(){
+   if(c_symmetric.getState()){
+      cp5.getController("x-CD-r").setValue(cp5.getController("x-CD-l").getValue());
+      cp5.getController("y-CD-r").setValue(cp5.getController("y-CD-l").getValue());
+      cp5.getController("z-CD-r").setValue(cp5.getController("z-CD-l").getValue());
+
+      cp5.getController("x-ofs-r").setValue(-cp5.getController("x-ofs-l").getValue());
+      cp5.getController("y-ofs-r").setValue(cp5.getController("y-ofs-l").getValue());
+      cp5.getController("z-ofs-r").setValue(cp5.getController("z-ofs-l").getValue());
+      
+      cp5.getController("rotx-ofs-r").setValue(cp5.getController("rotx-ofs-l").getValue());
+      cp5.getController("roty-ofs-r").setValue(-cp5.getController("roty-ofs-l").getValue());
+      cp5.getController("rotz-ofs-r").setValue(-cp5.getController("rotz-ofs-l").getValue());
+   }
+}
+
 void saveParams(){
   JSONObject json = setObject();
-  saveJSONObject(json, "param.json");
+  String filename = c_filename.getText();
+  if(filename==""){
+   saveJSONObject(json, "param.json");
+  }
+  else{
+     saveJSONObject(json, filename+".json");
+  }
   System.out.println("data saved");
 }
 void activateGogo(){
@@ -287,3 +321,5 @@ void setRefPos(){
 void UDP_Msg(){
   udp.send(msg,IP,PORT);
 }
+
+
