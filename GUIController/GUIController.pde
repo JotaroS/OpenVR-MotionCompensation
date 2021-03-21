@@ -114,7 +114,8 @@ void setup() {
    c_symmetric=cp5.addToggle("symmetric")
     .setLabel("symmetric (bound to left)")
     .setPosition(750, gui_y_offset)
-    .setSize(80,20);
+    .setSize(80,20)
+    .setState(true);
   
     gui_y_offset+=80;
   // left

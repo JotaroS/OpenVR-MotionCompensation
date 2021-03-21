@@ -437,6 +437,15 @@ namespace vrmotioncompensation
 			return true;
 		}
 
+		
+		vr::HmdQuaternion_t MotionCompensationManager::qlerp(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2, double fracT) {
+			vr::HmdQuaternion_t qr;
+			qr.x = q1.x * fracT + q2.x * (1 - fracT);
+			qr.y = q1.y * fracT + q2.y * (1 - fracT);
+			qr.z = q1.z * fracT + q2.z * (1 - fracT);
+			qr.w = q1.w * fracT + q2.w * (1 - fracT);
+			return qr;
+		}
 
 		bool MotionCompensationManager::applyGoGo(vr::DriverPose_t& pose, int idx) {
 			//LOG(INFO) << "jotaro: applyGOGO";
@@ -444,11 +453,31 @@ namespace vrmotioncompensation
 			_LastPos[idx][1] = pose.vecPosition[1];
 			_LastPos[idx][2] = pose.vecPosition[2];
 
-			pose.vecPosition[0] = _GoGoRefPos[idx][0] + (_LastPos[idx][0] - _GoGoRefPos[idx][0]) * _CDRatio[idx][0] + _OffsetPos[idx][0];
-			pose.vecPosition[1] = _GoGoRefPos[idx][1] + (_LastPos[idx][1] - _GoGoRefPos[idx][1]) * _CDRatio[idx][1] + _OffsetPos[idx][1];
-			pose.vecPosition[2] = _GoGoRefPos[idx][2] + (_LastPos[idx][2] - _GoGoRefPos[idx][2]) * _CDRatio[idx][2] + _OffsetPos[idx][2];
+			double xDist = _LastPos[idx][0] - _GoGoRefPos[idx][0];
+			double yDist = _LastPos[idx][1] - _GoGoRefPos[idx][1];
+			double zDist = _LastPos[idx][2] - _GoGoRefPos[idx][2];
 
+			// shoulder cant move more than 7cm
+			double maxDist = 0.07;
+
+			double xCDratio = abs(_CDRatio[idx][0] * xDist / maxDist + (1 - xDist / maxDist));
+			double yCDratio = abs(_CDRatio[idx][1] * yDist / maxDist + (1 - yDist / maxDist));
+			double zCDratio = abs(_CDRatio[idx][2] * zDist / maxDist + (1 - zDist / maxDist));
+
+			pose.vecPosition[0] = _GoGoRefPos[idx][0] + (_LastPos[idx][0] - _GoGoRefPos[idx][0]) * xCDratio + _OffsetPos[idx][0];
+			pose.vecPosition[1] = _GoGoRefPos[idx][1] + (_LastPos[idx][1] - _GoGoRefPos[idx][1]) * yCDratio + _OffsetPos[idx][1];
+			pose.vecPosition[2] = _GoGoRefPos[idx][2] + (_LastPos[idx][2] - _GoGoRefPos[idx][2]) * zCDratio + _OffsetPos[idx][2];
+			
+
+			// applyRotByQuat(&pose.qRotation, _OffsetQuat[idx]);
+			// 70 cm of y-distance is full exertion
+			double distance = (pose.vecPosition[2] - _GoGoRefPos[idx][2]);
+			// guard pose
+			vr::HmdQuaternion_t zero = vrmath::quaternionFromYawPitchRoll(-0.75, 0.65, 0);
+			vr::HmdQuaternion_t full = vrmath::quaternionFromYawPitchRoll(0.97, -0.5, 3.14);
+			//pose.qRotation = qlerp(zero, full, distance);
 			applyRotByQuat(&pose.qRotation, _OffsetQuat[idx]);
+			
 
 			pose.vecPosition[2] -= _triggerPunchOffset[idx] * _punchDist[idx]; //[0.0, 1.0] * _punchDist. TODO: thrust toward HMD forward.
 

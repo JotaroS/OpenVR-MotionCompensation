@@ -172,6 +172,8 @@ namespace vrmotioncompensation
 
 			vr::HmdQuaternion_t slerp(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2, double lambda);
 
+			vr::HmdQuaternion_t qlerp(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2, double lambda);
+
 			vr::HmdVector3d_t toEulerAngles(vr::HmdQuaternion_t q);
 
 			const double angleDifference(double angle1, double angle2);
