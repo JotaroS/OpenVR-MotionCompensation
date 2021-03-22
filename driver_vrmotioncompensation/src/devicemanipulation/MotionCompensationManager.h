@@ -104,6 +104,10 @@ namespace vrmotioncompensation
 
 			bool applyGoGo(vr::DriverPose_t& pose, int idx);
 
+			bool applyGoGoDelay(vr::DriverPose_t& pose, int idx);
+
+			vr::HmdQuaternion_t qlerp(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2, double fracT);
+
 			bool applyGoGoAccel(vr::DriverPose_t& pose, int idx);
 
 			void runFrame();

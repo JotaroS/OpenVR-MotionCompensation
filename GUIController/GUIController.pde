@@ -18,7 +18,7 @@ Textfield c_filename;
 Textfield c_loadFilename;
 DropdownList c_list_interactions; //list of interactoins
 int i_interaction_idx=0;
-String[] l_interactions = {"go-go", "go-go-with-accel","delay","no-go-go"};
+String[] l_interactions = {"go-go", "go-go-with-accel","delay","deactivate"};
 //
 
 class Quaternion{
@@ -220,7 +220,7 @@ void setup() {
   cp5.addSlider("punch_dist")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(0.0,1.0)
+     .setRange(0.0,0.1)
      .setValue(0.6);gui_y_offset+=30;
 }
 

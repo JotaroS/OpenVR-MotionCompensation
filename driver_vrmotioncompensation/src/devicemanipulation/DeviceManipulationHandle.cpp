@@ -81,6 +81,23 @@ namespace vrmotioncompensation
 					m_motionCompensationManager.applyGoGoAccel(newPose,1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
 				}
 			}
+			else if (m_deviceMode == MotionCompensationDeviceMode::Delay)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGoGoDelay(newPose, 0); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
+
+			else if (m_deviceMode == MotionCompensationDeviceMode::Delay1)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGoGoDelay(newPose, 1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
 
 			return true;
 		}

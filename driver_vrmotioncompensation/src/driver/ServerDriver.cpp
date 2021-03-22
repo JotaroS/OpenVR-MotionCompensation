@@ -161,35 +161,37 @@ namespace vrmotioncompensation
 
 			// handle UDP message from GUIController.
 			std::string msg = UDPSocket->getLastMessage();
-			LOG(INFO) << "Jotaro: last message = " << msg;
+			//LOG(INFO) << "Jotaro: last message = " << msg;
+			uint32_t leftDeviceManipulationHandle = 1;
+			uint32_t rightDeviceManipulationHandle = 2;
 			if (msg == "SetRefPos") {
-				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos(0);
+				if (deviceActivated[leftDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle); m_handle->setRefPos(0);
 				}
-				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos(1);
+				if (deviceActivated[rightDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle); m_handle->setRefPos(1);
 				}
 			}
 			else if (msg == "DeactivateGoGo") {
-				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setRefPos(0);
+				if (deviceActivated[leftDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle); m_handle->setRefPos(0);
 					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::Default);
 					m_handle->isGoGoActive = false;
 				}
-				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos(1);
+				if (deviceActivated[rightDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle); m_handle->setRefPos(1);
 					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::Default);
 					m_handle->isGoGoActive = false;
 				}
 			}
 			else if (msg == "ActivateGoGo") {
-				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1);  m_handle->setRefPos(0);
+				if (deviceActivated[leftDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle);  m_handle->setRefPos(0);
 					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated1);
 					m_handle->isGoGoActive = true;
 				}
-				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setRefPos(1);
+				if (deviceActivated[rightDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle); m_handle->setRefPos(1);
 					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::MotionCompensated);
 					m_handle->isGoGoActive = true;
 				}
@@ -199,32 +201,35 @@ namespace vrmotioncompensation
 				auto j = nlohmann::json::parse(msg);
 				MotionCompensationDeviceMode mode; //left
 				MotionCompensationDeviceMode mode1;//right
-				switch(j["type_interaction"]){
-					case "go-go":
-						mode = MotionCompensationDeviceMode::GoGo;
-						mode1 = MotionCompensationDeviceMode::GoGo1;
-					break;
-					case "go-go-with-accel":
-						mode = MotionCompensationDeviceMode::GoGo_accel;
-						mode1 = MotionCompensationDeviceMode::GoGo_accel1;
-					break;
-					case "deactivate":
-						mode = MotionCompensationDeviceMode::Default;
-						mode1 = MotionCompensationDeviceMode::Default;
-					break;
+				std::string type_interaction = j["type_interaction"];
+				if (type_interaction == "go-go") {
+					mode = MotionCompensationDeviceMode::MotionCompensated;
+					mode1 = MotionCompensationDeviceMode::MotionCompensated1;
 				}
-				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1);
-					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::mode1);
+				if (type_interaction == "go-go-with-accel") {
+					mode = MotionCompensationDeviceMode::GoGo_accel;
+					mode1 = MotionCompensationDeviceMode::GoGo_accel1;
+				}
+				if (type_interaction == "deactivate") {
+					mode = MotionCompensationDeviceMode::Default;
+					mode1 = MotionCompensationDeviceMode::Default;
+				}
+				if (type_interaction == "delay") {
+					mode = MotionCompensationDeviceMode::Delay;
+					mode1 = MotionCompensationDeviceMode::Delay1;
+				}
+				if (deviceActivated[leftDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle);
+					m_handle->setMotionCompensationDeviceMode(mode1);
 					m_handle->setCDRatio(j["x-CD-r"], j["y-CD-r"], j["z-CD-r"],0);
 					m_handle->setOffset(j["x-ofs-r"], j["y-ofs-r"], j["z-ofs-r"],0);
 					m_handle->setRotOffset(j["rotx-ofs-r"], j["roty-ofs-r"], j["rotz-ofs-r"],0);
 					m_handle->setRotOffsetQuat(j["qw-ofs-r"], j["qx-ofs-r"], j["qy-ofs-r"], j["qz-ofs-r"],0);
 					m_handle->setPunchDist(j["punch_dist"],0);
 				}
-				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2);
-					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::mode);
+				if (deviceActivated[rightDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle);
+					m_handle->setMotionCompensationDeviceMode(mode);
 					m_handle->setCDRatio(j["x-CD-l"], j["y-CD-l"], j["z-CD-l"], 1);
 					m_handle->setOffset(j["x-ofs-l"], j["y-ofs-l"], j["z-ofs-l"], 1);
 					m_handle->setRotOffset(j["rotx-ofs-l"], j["roty-ofs-l"], j["rotz-ofs-l"], 1);
@@ -235,11 +240,13 @@ namespace vrmotioncompensation
 			//punching / reaching 'controller' condition
 			//this runs every frame.
 			{
-				if (deviceActivated[1]) {
-					auto m_handle = this->getDeviceManipulationHandleById(1); m_handle->setPunchTriggerOffset(gamepad.rightTrigger,0);
+				if (deviceActivated[leftDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle);
+					m_handle->setPunchTriggerOffset(gamepad.rightTrigger,0);
 				}
-				if (deviceActivated[2]) {
-					auto m_handle = this->getDeviceManipulationHandleById(2); m_handle->setPunchTriggerOffset(gamepad.leftTrigger,1);
+				if (deviceActivated[rightDeviceManipulationHandle]) {
+					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle);
+					m_handle->setPunchTriggerOffset(gamepad.leftTrigger,1);
 				}
 			}
 

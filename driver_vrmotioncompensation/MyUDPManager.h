@@ -28,12 +28,13 @@ struct MyUDPClient {
             LOG(INFO) << "Receive failed: " << error.message() << "\n";
             return;
         }
-        LOG(INFO) << "Received: '" << std::string(recv_buffer.begin(), recv_buffer.begin() + bytes_transferred) << "' (" << error.message() << ")\n";
+        //LOG(INFO) << "Received: '" << std::string(recv_buffer.begin(), recv_buffer.begin() + bytes_transferred) << "' (" << error.message() << ")\n";
         lastMessage = std::string(recv_buffer.begin(), recv_buffer.begin() + bytes_transferred);
         messageAvail = true;
 
+
         if (count > 0) {
-            LOG(INFO) << "Count: " << count << "\n";
+            //LOG(INFO) << "Count: " << count << "\n";
             wait();
         }
     }

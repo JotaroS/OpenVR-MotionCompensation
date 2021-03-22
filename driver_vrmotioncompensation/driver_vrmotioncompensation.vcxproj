@@ -203,7 +203,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NDEBUG;_WINDOWS;_USRDLL;DRIVER_VRINPUTEMULATOR_EXPORTS;_WIN32_WINNT=0x0A00;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\include\boost-1_72;C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\include;..\third-party\boost_1_72_0;..\lib_vrmotioncompensation\include;$(OPENVR_ROOT)\headers;..\third-party\easylogging++;..\third-party\MinHook\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Github\OpenVR-MotionCompensation\third-party;D:\Github\OpenVR-MotionCompensation\third-party\boost_1_72_0\include\boost-1_72;C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\include\boost-1_72;C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\include;..\third-party\boost_1_72_0;..\lib_vrmotioncompensation\include;$(OPENVR_ROOT)\headers;..\third-party\easylogging++;..\third-party\MinHook\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
@@ -211,7 +211,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\lib;..\third-party\boost_1_72_0\stage\lib;$(OPENVR_ROOT)\lib\win64;$(BOOST_LIB);..\third-party\MinHook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Github\OpenVR-MotionCompensation\third-party\boost_1_72_0\lib;C:\Users\jojoj\obenkyo\OpenVR-MotionCompensation\third-party\lib;..\third-party\boost_1_72_0\stage\lib;$(OPENVR_ROOT)\lib\win64;$(BOOST_LIB);..\third-party\MinHook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libMinHook-x64-v141-mtd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/DYNAMICBASE "xinput.lib" %(AdditionalOptions)</AdditionalOptions>
     </Link>
