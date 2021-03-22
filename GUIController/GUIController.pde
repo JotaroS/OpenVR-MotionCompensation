@@ -18,7 +18,7 @@ Textfield c_filename;
 Textfield c_loadFilename;
 DropdownList c_list_interactions; //list of interactoins
 int i_interaction_idx=0;
-String[] l_interactions = {"go-go", "boxing","beatsaber"};
+String[] l_interactions = {"go-go", "go-go-with-accel","delay","no-go-go"};
 //
 
 class Quaternion{

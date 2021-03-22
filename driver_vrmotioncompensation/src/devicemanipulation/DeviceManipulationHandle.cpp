@@ -65,6 +65,23 @@ namespace vrmotioncompensation
 				}
 			}
 
+			else if (m_deviceMode == MotionCompensationDeviceMode::GoGo_accel)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGoGoAccel(newPose,0); //left hand
+				}
+			}
+			else if (m_deviceMode == MotionCompensationDeviceMode::GoGo_accel1)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGoGoAccel(newPose,1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
+
 			return true;
 		}
 

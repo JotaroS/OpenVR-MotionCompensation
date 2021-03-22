@@ -455,6 +455,23 @@ namespace vrmotioncompensation
 			return true;
 		}
 
+		bool MotionCompensationManager::applyGoGoAccel(vr::DriverPose_t& pose, int idx) {
+			//LOG(INFO) << "jotaro: applyGOGO";
+			_LastPos[idx][0] = pose.vecPosition[0];
+			_LastPos[idx][1] = pose.vecPosition[1];
+			_LastPos[idx][2] = pose.vecPosition[2];
+
+			pose.vecPosition[0] = _GoGoRefPos[idx][0] + (_LastPos[idx][0] - _GoGoRefPos[idx][0]) * _CDRatio[idx][0] + _OffsetPos[idx][0];
+			pose.vecPosition[1] = _GoGoRefPos[idx][1] + (_LastPos[idx][1] - _GoGoRefPos[idx][1]) * _CDRatio[idx][1] + _OffsetPos[idx][1];
+			pose.vecPosition[2] = _GoGoRefPos[idx][2] + (_LastPos[idx][2] - _GoGoRefPos[idx][2]) * _CDRatio[idx][2] + _OffsetPos[idx][2];
+
+			applyRotByQuat(&pose.qRotation, _OffsetQuat[idx]);
+
+			pose.vecPosition[2] -= _triggerPunchOffset[idx] * _punchDist[idx]; //[0.0, 1.0] * _punchDist. TODO: thrust toward HMD forward.
+
+			return true;
+		}
+
 		//TODO: Refactor
 		//bool MotionCompensationManager::applyGoGo(vr::DriverPose_t& pose) {
 		//	//LOG(INFO) << "jotaro: applyGOGO";

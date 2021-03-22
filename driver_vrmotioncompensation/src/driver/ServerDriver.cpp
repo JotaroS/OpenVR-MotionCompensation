@@ -197,8 +197,25 @@ namespace vrmotioncompensation
 			// this runs every 50ms.
 			else if (msg != "") {
 				auto j = nlohmann::json::parse(msg);
+				MotionCompensationDeviceMode mode; //left
+				MotionCompensationDeviceMode mode1;//right
+				switch(j["type_interaction"]){
+					case "go-go":
+						mode = MotionCompensationDeviceMode::GoGo;
+						mode1 = MotionCompensationDeviceMode::GoGo1;
+					break;
+					case "go-go-with-accel":
+						mode = MotionCompensationDeviceMode::GoGo_accel;
+						mode1 = MotionCompensationDeviceMode::GoGo_accel1;
+					break;
+					case "deactivate":
+						mode = MotionCompensationDeviceMode::Default;
+						mode1 = MotionCompensationDeviceMode::Default;
+					break;
+				}
 				if (deviceActivated[1]) {
 					auto m_handle = this->getDeviceManipulationHandleById(1);
+					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::mode1);
 					m_handle->setCDRatio(j["x-CD-r"], j["y-CD-r"], j["z-CD-r"],0);
 					m_handle->setOffset(j["x-ofs-r"], j["y-ofs-r"], j["z-ofs-r"],0);
 					m_handle->setRotOffset(j["rotx-ofs-r"], j["roty-ofs-r"], j["rotz-ofs-r"],0);
@@ -207,6 +224,7 @@ namespace vrmotioncompensation
 				}
 				if (deviceActivated[2]) {
 					auto m_handle = this->getDeviceManipulationHandleById(2);
+					m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::mode);
 					m_handle->setCDRatio(j["x-CD-l"], j["y-CD-l"], j["z-CD-l"], 1);
 					m_handle->setOffset(j["x-ofs-l"], j["y-ofs-l"], j["z-ofs-l"], 1);
 					m_handle->setRotOffset(j["rotx-ofs-l"], j["roty-ofs-l"], j["rotz-ofs-l"], 1);

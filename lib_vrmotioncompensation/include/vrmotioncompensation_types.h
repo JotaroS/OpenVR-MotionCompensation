@@ -16,7 +16,11 @@ namespace vrmotioncompensation
 		Default = 0,
 		ReferenceTracker = 1,
 		MotionCompensated = 2,
-		MotionCompensated1 = 3
+		MotionCompensated1 = 3,
+		GoGo=4,
+		GoGo1=5,
+		GoGo_accel=6,
+		GoGo_accel1=7,
 	};
 
 	struct DeviceInfo
