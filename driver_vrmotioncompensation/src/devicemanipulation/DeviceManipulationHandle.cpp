@@ -99,6 +99,26 @@ namespace vrmotioncompensation
 				}
 			}
 
+			else if (m_deviceMode == MotionCompensationDeviceMode::Saber)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGoGoSaber(newPose, 0); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
+
+			else if (m_deviceMode == MotionCompensationDeviceMode::Saber1)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGoGoSaber(newPose, 1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
+
+
+
 			return true;
 		}
 
@@ -130,6 +150,10 @@ namespace vrmotioncompensation
 		}
 		void DeviceManipulationHandle::setPunchDist(double val, int idx) {
 			m_motionCompensationManager.setPunchDist(val, idx);
+		}
+
+		void DeviceManipulationHandle::setSaberRot(double val) {
+			m_motionCompensationManager.setSaberRot(val);
 		}
 	} // end namespace driver
 } // end namespace vrmotioncompensation

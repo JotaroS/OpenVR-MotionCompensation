@@ -473,6 +473,31 @@ namespace vrmotioncompensation
 			return true;
 		}
 
+		bool MotionCompensationManager::applyGoGoSaber(vr::DriverPose_t& pose, int idx) {
+			//LOG(INFO) << "jotaro: applyGOGO";
+			_LastPos[idx][0] = pose.vecPosition[0];
+			_LastPos[idx][1] = pose.vecPosition[1];
+			_LastPos[idx][2] = pose.vecPosition[2];
+
+			pose.vecPosition[0] = _GoGoRefPos[idx][0] + (_LastPos[idx][0] - _GoGoRefPos[idx][0]) * _CDRatio[idx][0] + _OffsetPos[idx][0];
+			pose.vecPosition[1] = _GoGoRefPos[idx][1] + (_LastPos[idx][1] - _GoGoRefPos[idx][1]) * _CDRatio[idx][1] + _OffsetPos[idx][1];
+			pose.vecPosition[2] = _GoGoRefPos[idx][2] + (_LastPos[idx][2] - _GoGoRefPos[idx][2]) * _CDRatio[idx][2] + _OffsetPos[idx][2];
+
+
+			double xMoveAmount = (_LastPos[idx][0] - _GoGoRefPos[idx][0]);
+			double yMoveAmount = (_LastPos[idx][1] - _GoGoRefPos[idx][1]);
+
+			//pose.vecPosition[0] = 0;
+			//pose.vecPosition[1] = 0;
+			//pose.vecPosition[2] = 0;
+
+			//vr::HmdQuaternion_t rot = vrmath::quaternionFromYawPitchRoll(xMoveAmount * _SaberRot,0,0); // rotation might be flipped.
+			applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationX(yMoveAmount * _SaberRot));
+			//applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationY(xMoveAmount * _SaberRot));
+			
+			return true;
+		}
+
 		vr::HmdQuaternion_t MotionCompensationManager::qlerp(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2, double fracT) {
 			vr::HmdQuaternion_t qr;
 			qr.x = q1.x * fracT + q2.x * (1 - fracT);

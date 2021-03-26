@@ -22,7 +22,9 @@ namespace vrmotioncompensation
 		GoGo_accel = 6,
 		GoGo_accel1 = 7,
 		Delay = 8,
-		Delay1 = 9
+		Delay1 = 9,
+		Saber = 10,
+		Saber1 = 11
 	};
 
 	struct DeviceInfo

@@ -218,6 +218,10 @@ namespace vrmotioncompensation
 					mode = MotionCompensationDeviceMode::Delay;
 					mode1 = MotionCompensationDeviceMode::Delay1;
 				}
+				if (type_interaction == "saber") {
+					mode = MotionCompensationDeviceMode::Saber;
+					mode1 = MotionCompensationDeviceMode::Saber1;
+				}
 				if (deviceActivated[leftDeviceManipulationHandle]) {
 					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle);
 					m_handle->setMotionCompensationDeviceMode(mode1);
@@ -226,6 +230,7 @@ namespace vrmotioncompensation
 					m_handle->setRotOffset(j["rotx-ofs-r"], j["roty-ofs-r"], j["rotz-ofs-r"],0);
 					m_handle->setRotOffsetQuat(j["qw-ofs-r"], j["qx-ofs-r"], j["qy-ofs-r"], j["qz-ofs-r"],0);
 					m_handle->setPunchDist(j["punch_dist"],0);
+					m_handle->setSaberRot(j["saber_rot"]);
 				}
 				if (deviceActivated[rightDeviceManipulationHandle]) {
 					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle);
@@ -235,6 +240,7 @@ namespace vrmotioncompensation
 					m_handle->setRotOffset(j["rotx-ofs-l"], j["roty-ofs-l"], j["rotz-ofs-l"], 1);
 					m_handle->setRotOffsetQuat(j["qw-ofs-l"], j["qx-ofs-l"], j["qy-ofs-l"], j["qz-ofs-l"], 1);
 					m_handle->setPunchDist(j["punch_dist"], 1);
+					m_handle->setSaberRot(j["saber_rot"]);
 				}
 			}
 			//punching / reaching 'controller' condition

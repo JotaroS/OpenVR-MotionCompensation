@@ -50,7 +50,7 @@ namespace vrmotioncompensation
 			MotionCompensationManager(ServerDriver* parent);/* : m_parent(parent)
 			{
 			}*/
-			
+
 			bool StartDebugData();
 
 			void StopDebugData();
@@ -93,18 +93,20 @@ namespace vrmotioncompensation
 			void setOffsets(MMFstruct_OVRMC_v1 offsets);
 
 			bool isZeroPoseValid();
-			
+
 			void resetZeroPose();
 
 			void setZeroPose(const vr::DriverPose_t& pose);
-			
+
 			void updateRefPose(const vr::DriverPose_t& pose);
-			
+
 			bool applyMotionCompensation(vr::DriverPose_t& pose);
 
 			bool applyGoGo(vr::DriverPose_t& pose, int idx);
 
 			bool applyGoGoDelay(vr::DriverPose_t& pose, int idx);
+
+			bool applyGoGoSaber(vr::DriverPose_t& pose, int idx);
 
 			vr::HmdQuaternion_t qlerp(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2, double fracT);
 
@@ -114,24 +116,24 @@ namespace vrmotioncompensation
 			bool applyGoGo(vr::DriverPose_t& pose);
 			bool applyGoGo1(vr::DriverPose_t& pose);
 			void setPunchDist(float val, int idx);
-			void setPunchTriggerOffset(float val,int idx);
-			void setRefPos(int idx){
+			void setPunchTriggerOffset(float val, int idx);
+			void setRefPos(int idx) {
 				_GoGoRefPos[idx][0] = _LastPos[idx][0];
 				_GoGoRefPos[idx][1] = _LastPos[idx][1];
 				_GoGoRefPos[idx][2] = _LastPos[idx][2];
 			}
 
-			void setCDRatio(double x, double y, double z, int idx){
+			void setCDRatio(double x, double y, double z, int idx) {
 				_CDRatio[idx][0] = x;
 				_CDRatio[idx][1] = y;
 				_CDRatio[idx][2] = z;
 			}
-			void setOffset(double x, double y, double z, int idx){
+			void setOffset(double x, double y, double z, int idx) {
 				_OffsetPos[idx][0] = x;
 				_OffsetPos[idx][1] = y;
 				_OffsetPos[idx][2] = z;
 			}
-			void setRotOffset(double x, double y, double z, int idx){
+			void setRotOffset(double x, double y, double z, int idx) {
 				_OffsetRot[idx][0] = x;
 				_OffsetRot[idx][1] = y;
 				_OffsetRot[idx][2] = z;
@@ -155,7 +157,9 @@ namespace vrmotioncompensation
 				q1->z = ret.z;
 
 			}
-			
+			void setSaberRot(double val) {
+				_SaberRot = val;
+			}
 
 		private:
 
@@ -292,6 +296,8 @@ namespace vrmotioncompensation
 			double _OffsetRot[2][3] = {{ 0,0,0 },{0,0,0}};
 			double _triggerPunchOffset[2] = { 0.0f,0.0 };
 			double _punchDist[2] = { 0.1f,0.1f };
+
+			double _SaberRot = 1.0;
 			
 		};
 	}

@@ -18,7 +18,7 @@ Textfield c_filename;
 Textfield c_loadFilename;
 DropdownList c_list_interactions; //list of interactoins
 int i_interaction_idx=0;
-String[] l_interactions = {"go-go", "go-go-with-accel","delay","deactivate"};
+String[] l_interactions = {"go-go", "go-go-with-accel","saber","deactivate"};
 //
 
 class Quaternion{
@@ -121,17 +121,17 @@ void setup() {
   cp5.addSlider("x-CD-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(1,5.0)
+     .setRange(1,10.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("y-CD-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(1,5.0)
+     .setRange(1,20.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("z-CD-l")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(1,5.0)
+     .setRange(1,10.0)
      .setValue(3.0);gui_y_offset+=60;
 
   cp5.addSlider("x-ofs-l")
@@ -173,17 +173,17 @@ void setup() {
   cp5.addSlider("x-CD-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(1,5.0)
+     .setRange(1,10.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("y-CD-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(1,5.0)
+     .setRange(1,20.0)
      .setValue(3.0);gui_y_offset+=30;
   cp5.addSlider("z-CD-r")
      .setPosition(gui_x_offset,gui_y_offset)
      .setSize(200,20)
-     .setRange(1,5.0)
+     .setRange(1,10.0)
      .setValue(3.0);gui_y_offset+=60;
 
   cp5.addSlider("x-ofs-r")
@@ -222,6 +222,12 @@ void setup() {
      .setSize(200,20)
      .setRange(0.0,0.1)
      .setValue(0.6);gui_y_offset+=30;
+     
+     cp5.addSlider("saber_rot")
+     .setPosition(gui_x_offset,gui_y_offset)
+     .setSize(200,20)
+     .setRange(1.0,100.0)
+     .setValue(2.0);gui_y_offset+=30;
 }
 
 JSONObject setObject(){
@@ -268,10 +274,12 @@ JSONObject setObject(){
   json.setFloat("qy-ofs-r", q.y);
   json.setFloat("qz-ofs-r", q.z);
   json.setFloat("punch_dist", cp5.getController("punch_dist").getValue());
+  json.setFloat("saber_rot", cp5.getController("saber_rot").getValue());
   json.setString("type_interaction", l_interactions[i_interaction_idx]);
+ 
 
   String str = json.toString();
-  System.out.println(str);
+  //.   System.out.println(str);
   return json;
 }
 
@@ -388,4 +396,12 @@ void loadfile(){
      setObject(json);
   }
   System.out.println("data loaded");
+}
+
+void keyPressed(){
+  if(key == 32){ // 32 = spacebar
+    // switch interaction in between here. TODO: jotaro.
+    setRefPos();
+  }
+  return;
 }
