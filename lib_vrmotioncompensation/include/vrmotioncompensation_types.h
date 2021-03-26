@@ -24,7 +24,11 @@ namespace vrmotioncompensation
 		Delay = 8,
 		Delay1 = 9,
 		Saber = 10,
-		Saber1 = 11
+		Saber1 = 11,
+		GamepadBoxing = 12,
+		GamepadBoxing1 = 13,
+		GamepadSaber = 14,
+		GamepadSaber1 = 15
 	};
 
 	struct DeviceInfo

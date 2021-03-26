@@ -222,6 +222,14 @@ namespace vrmotioncompensation
 					mode = MotionCompensationDeviceMode::Saber;
 					mode1 = MotionCompensationDeviceMode::Saber1;
 				}
+				if (type_interaction == "gamepad-boxing") {
+					mode = MotionCompensationDeviceMode::GamepadBoxing;
+					mode1 = MotionCompensationDeviceMode::GamepadBoxing1;
+				}
+				if (type_interaction == "gamepad-saber") {
+					mode = MotionCompensationDeviceMode::GamepadSaber;
+					mode1 = MotionCompensationDeviceMode::GamepadSaber1;
+				}
 				if (deviceActivated[leftDeviceManipulationHandle]) {
 					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle);
 					m_handle->setMotionCompensationDeviceMode(mode1);
@@ -248,11 +256,16 @@ namespace vrmotioncompensation
 			{
 				if (deviceActivated[leftDeviceManipulationHandle]) {
 					auto m_handle = this->getDeviceManipulationHandleById(leftDeviceManipulationHandle);
-					m_handle->setPunchTriggerOffset(gamepad.rightTrigger,0);
+					m_handle->setPunchTriggerOffset(gamepad.rightTrigger, 0);
+					m_handle->setGamepadStickOffset(gamepad.rightStickX, gamepad.rightStickY, 0);
+					m_handle->setAButtonPressed(gamepad.IsPressed(XINPUT_GAMEPAD_A));
+					m_handle->setBButtonPressed(gamepad.IsPressed(XINPUT_GAMEPAD_B));
 				}
 				if (deviceActivated[rightDeviceManipulationHandle]) {
 					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle);
-					m_handle->setPunchTriggerOffset(gamepad.leftTrigger,1);
+					m_handle->setGamepadStickOffset(gamepad.leftStickX, gamepad.leftStickY, 1);
+					m_handle->setPunchTriggerOffset(gamepad.leftTrigger, 1);
+				
 				}
 			}
 

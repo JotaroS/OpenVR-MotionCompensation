@@ -85,6 +85,11 @@ namespace vrmotioncompensation
 
 			void setPunchTriggerOffset(double val, int idx);
 
+			void setAButtonPressed(bool isPressed);
+			void setBButtonPressed(bool isPressed);
+
+			void setGamepadStickOffset(float x, float y, int idx);
+
 			void setPunchDist(double val, int idx);
 
 			void setSaberRot(double val);

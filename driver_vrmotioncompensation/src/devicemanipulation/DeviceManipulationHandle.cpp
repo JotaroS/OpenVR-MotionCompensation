@@ -117,6 +117,42 @@ namespace vrmotioncompensation
 				}
 			}
 
+			//gamepad conditions
+			else if (m_deviceMode == MotionCompensationDeviceMode::GamepadBoxing)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGamepadBoxing(newPose, 0); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
+
+			else if (m_deviceMode == MotionCompensationDeviceMode::GamepadBoxing1)
+			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGamepadBoxing(newPose, 1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
+
+			else if (m_deviceMode == MotionCompensationDeviceMode::GamepadSaber)
+			{
+			//Check if the pose is valid to prevent unwanted jitter and movement
+			if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+			{
+				m_motionCompensationManager.applyGamepadSaber(newPose, 0); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+			}
+			}
+
+			else if (m_deviceMode == MotionCompensationDeviceMode::GamepadSaber1)
+			{
+			//Check if the pose is valid to prevent unwanted jitter and movement
+			if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+			{
+				m_motionCompensationManager.applyGamepadSaber(newPose, 1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+			}
+			}
 
 
 			return true;
@@ -147,6 +183,16 @@ namespace vrmotioncompensation
 		}
 		void DeviceManipulationHandle::setPunchTriggerOffset(double val, int idx) {
 			m_motionCompensationManager.setPunchTriggerOffset(val, idx);
+		}
+		void DeviceManipulationHandle::setAButtonPressed(bool isPressed)
+		{
+			m_motionCompensationManager.setAButtonPressed(isPressed);
+		}
+		void DeviceManipulationHandle::setBButtonPressed(bool isPressed){
+			m_motionCompensationManager.setBButtonPressed(isPressed);
+		}
+		void DeviceManipulationHandle::setGamepadStickOffset(float x, float y, int idx) {
+			m_motionCompensationManager.setGamepadStickOffset(x,y,idx);
 		}
 		void DeviceManipulationHandle::setPunchDist(double val, int idx) {
 			m_motionCompensationManager.setPunchDist(val, idx);

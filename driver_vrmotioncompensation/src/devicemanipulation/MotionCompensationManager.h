@@ -108,6 +108,10 @@ namespace vrmotioncompensation
 
 			bool applyGoGoSaber(vr::DriverPose_t& pose, int idx);
 
+			bool applyGamepadBoxing(vr::DriverPose_t& pose, int idx);
+
+			bool applyGamepadSaber(vr::DriverPose_t& pose, int idx);
+
 			vr::HmdQuaternion_t qlerp(vr::HmdQuaternion_t q1, vr::HmdQuaternion_t q2, double fracT);
 
 			bool applyGoGoAccel(vr::DriverPose_t& pose, int idx);
@@ -157,6 +161,19 @@ namespace vrmotioncompensation
 				q1->z = ret.z;
 
 			}
+			void setAButtonPressed(bool val) {
+				_AButtonPressed = val;
+			}
+			void setBButtonPressed(bool val) {
+				_BButtonPressed = val;
+			}
+
+			void setGamepadStickOffset(float x, float y, int idx) {
+				_stickOffset[idx][0] = x; //0=x, 1=y.
+				_stickOffset[idx][1] = y;
+				return;
+			}
+
 			void setSaberRot(double val) {
 				_SaberRot = val;
 			}
@@ -296,6 +313,10 @@ namespace vrmotioncompensation
 			double _OffsetRot[2][3] = {{ 0,0,0 },{0,0,0}};
 			double _triggerPunchOffset[2] = { 0.0f,0.0 };
 			double _punchDist[2] = { 0.1f,0.1f };
+			double _stickOffset[2][2] = { {0.0f, 0.0f},{0.0f,0.0f} }; //left, right, x, y
+
+			bool _AButtonPressed = false;
+			bool _BButtonPressed = false;
 
 			double _SaberRot = 1.0;
 			

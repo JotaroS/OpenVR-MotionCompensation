@@ -452,6 +452,10 @@ namespace vrmotioncompensation
 
 			pose.vecPosition[2] -= _triggerPunchOffset[idx] * _punchDist[idx]; //[0.0, 1.0] * _punchDist. TODO: thrust toward HMD forward.
 
+			// clamp Z pos
+			pose.vecPosition[2] = std::min(_GoGoRefPos[idx][2] + 0.1, pose.vecPosition[2]);
+
+
 			return true;
 		}
 
@@ -468,7 +472,7 @@ namespace vrmotioncompensation
 
 			applyRotByQuat(&pose.qRotation, _OffsetQuat[idx]);
 
-			pose.vecPosition[2] -= _triggerPunchOffset[idx] * _punchDist[idx]; //[0.0, 1.0] * _punchDist. TODO: thrust toward HMD forward.
+			 //[0.0, 1.0] * _punchDist. TODO: thrust toward HMD forward.
 
 			return true;
 		}
@@ -495,6 +499,62 @@ namespace vrmotioncompensation
 			applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationX(yMoveAmount * _SaberRot));
 			//applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationY(xMoveAmount * _SaberRot));
 			
+			return true;
+		}
+
+		//gampead
+
+		bool MotionCompensationManager::applyGamepadBoxing(vr::DriverPose_t& pose, int idx) {
+			_LastPos[idx][0] = pose.vecPosition[0];
+			_LastPos[idx][1] = pose.vecPosition[1];
+			_LastPos[idx][2] = pose.vecPosition[2];
+
+			//position should be refpos + xxx
+			double t = _triggerPunchOffset[idx];
+			double x = 0;
+			double y = 0;
+			double z = 0;
+			if (_AButtonPressed) {
+				// uppercut (some y direction mod)
+				z = t;
+				y = (1.5 * t) * (t - 1);
+			}
+			else if (_BButtonPressed) {
+				// hook (some x direction mod)
+				z = t;
+				x = (1.5 * t) * (t - 1);
+				// differentiate somehow betwwen left and right here (multiply y with -1 in one case...)
+				if (idx > 0) {
+					x *= -1;
+				}
+				
+			}
+			else {
+				//jab (z direction mod)
+				z = t;
+			}
+
+			double factor = 10;
+
+			pose.vecPosition[0] = _GoGoRefPos[idx][0] + _OffsetPos[idx][0] + x * _punchDist[idx] * factor;
+			pose.vecPosition[1] = _GoGoRefPos[idx][1] + _OffsetPos[idx][1] + y * _punchDist[idx] * factor;
+			pose.vecPosition[2] = _GoGoRefPos[idx][2] + _OffsetPos[idx][2] + z * _punchDist[idx] * factor;
+
+			// applyRotByQuat(&pose.qRotation, _OffsetQuat[idx]);
+			return true;
+		}
+
+		bool MotionCompensationManager::applyGamepadSaber(vr::DriverPose_t& pose, int idx) {
+			double xOffset = _stickOffset[idx][0];
+			double yOffset = _stickOffset[idx][1];
+
+			//modify x/z position of saber using xoffset/yoffset here.
+
+			pose.vecPosition[0] = _GoGoRefPos[idx][0] + _OffsetPos[idx][0] + xOffset * _triggerPunchOffset[idx];
+			pose.vecPosition[1] = _GoGoRefPos[idx][1] + _OffsetPos[idx][1] + yOffset * _triggerPunchOffset[idx];
+			pose.vecPosition[2] = _GoGoRefPos[idx][2] + _OffsetPos[idx][2];
+
+			//pose... = repos + zxxxx
 			return true;
 		}
 
