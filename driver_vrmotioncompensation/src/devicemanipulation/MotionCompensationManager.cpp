@@ -494,10 +494,10 @@ namespace vrmotioncompensation
 			//pose.vecPosition[0] = 0;
 			//pose.vecPosition[1] = 0;
 			//pose.vecPosition[2] = 0;
-
+			applyRotByQuat(&pose.qRotation, _OffsetQuat[idx]);//
 			//vr::HmdQuaternion_t rot = vrmath::quaternionFromYawPitchRoll(xMoveAmount * _SaberRot,0,0); // rotation might be flipped.
-			applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationX(yMoveAmount * _SaberRot));
-			//applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationY(xMoveAmount * _SaberRot));
+			applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationX( yMoveAmount * _SaberRot)); //flipped for go-go condition.
+			applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationY(-xMoveAmount * _SaberRot));
 			
 			return true;
 		}
@@ -517,7 +517,7 @@ namespace vrmotioncompensation
 			if (_AButtonPressed) {
 				// uppercut (some y direction mod)
 				z = t;
-				y = (1.5 * t) * (t - 1);
+				y = (1.5 * 0.7*t) * (0.7*t - 1);
 			}
 			else if (_BButtonPressed) {
 				// hook (some x direction mod)
@@ -536,23 +536,34 @@ namespace vrmotioncompensation
 
 			double factor = 10;
 
-			pose.vecPosition[0] = _GoGoRefPos[idx][0] + _OffsetPos[idx][0] + x * _punchDist[idx] * factor;
+			pose.vecPosition[0] = _GoGoRefPos[idx][0] + _OffsetPos[idx][0] - x * _punchDist[idx] * factor;
 			pose.vecPosition[1] = _GoGoRefPos[idx][1] + _OffsetPos[idx][1] + y * _punchDist[idx] * factor;
-			pose.vecPosition[2] = _GoGoRefPos[idx][2] + _OffsetPos[idx][2] + z * _punchDist[idx] * factor;
+			pose.vecPosition[2] = _GoGoRefPos[idx][2] + _OffsetPos[idx][2] - z * _punchDist[idx] * factor;
 
-			// applyRotByQuat(&pose.qRotation, _OffsetQuat[idx]);
+			pose.qRotation = _OffsetQuat[idx];
 			return true;
 		}
 
 		bool MotionCompensationManager::applyGamepadSaber(vr::DriverPose_t& pose, int idx) {
+			_LastPos[idx][0] = pose.vecPosition[0];
+			_LastPos[idx][1] = pose.vecPosition[1];
+			_LastPos[idx][2] = pose.vecPosition[2];
+
+			//calculate distance error.
+			
 			double xOffset = _stickOffset[idx][0];
 			double yOffset = _stickOffset[idx][1];
 
 			//modify x/z position of saber using xoffset/yoffset here.
 
-			pose.vecPosition[0] = _GoGoRefPos[idx][0] + _OffsetPos[idx][0] + xOffset * _triggerPunchOffset[idx];
-			pose.vecPosition[1] = _GoGoRefPos[idx][1] + _OffsetPos[idx][1] + yOffset * _triggerPunchOffset[idx];
-			pose.vecPosition[2] = _GoGoRefPos[idx][2] + _OffsetPos[idx][2];
+			pose.vecPosition[0] = _GoGoRefPos[idx][0] + _OffsetPos[idx][0] + xOffset;
+			pose.vecPosition[1] = _GoGoRefPos[idx][1] + _OffsetPos[idx][1] + yOffset;
+			pose.vecPosition[2] = _GoGoRefPos[idx][2] + _OffsetPos[idx][2] + _triggerPunchOffset[idx] *_punchDist[idx];
+			double xMoveAmount = xOffset;
+			double yMoveAmount = yOffset;
+			pose.qRotation = _OffsetQuat[idx];
+			applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationX( yMoveAmount * _SaberRot)); //flipped for go-go condition.
+			applyRotByQuat(&pose.qRotation, vrmath::quaternionFromRotationY(-xMoveAmount * _SaberRot));
 
 			//pose... = repos + zxxxx
 			return true;
