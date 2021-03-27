@@ -178,6 +178,12 @@ namespace vrmotioncompensation
 				_SaberRot = val;
 			}
 
+			void setHMDPos(vr::DriverPose_t& pose) {
+				_hmdPos.v[0] = pose.vecPosition[0];
+				_hmdPos.v[1] = pose.vecPosition[1];
+				_hmdPos.v[2] = pose.vecPosition[2];
+				return;
+			}
 		private:
 
 			void InitDebugData();
@@ -314,6 +320,7 @@ namespace vrmotioncompensation
 			double _triggerPunchOffset[2] = { 0.0f,0.0 };
 			double _punchDist[2] = { 0.1f,0.1f };
 			double _stickOffset[2][2] = { {0.0f, 0.0f},{0.0f,0.0f} }; //left, right, x, y
+			vr::HmdVector3_t _hmdPos = { 0,0,0 };
 
 			bool _AButtonPressed = false;
 			bool _BButtonPressed = false;

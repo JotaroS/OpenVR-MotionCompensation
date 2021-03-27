@@ -28,7 +28,8 @@ namespace vrmotioncompensation
 		GamepadBoxing = 12,
 		GamepadBoxing1 = 13,
 		GamepadSaber = 14,
-		GamepadSaber1 = 15
+		GamepadSaber1 = 15,
+		HMDTracking = 16
 	};
 
 	struct DeviceInfo

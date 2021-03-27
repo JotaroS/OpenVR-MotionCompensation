@@ -162,6 +162,13 @@ namespace vrmotioncompensation
 			// handle UDP message from GUIController.
 			std::string msg = UDPSocket->getLastMessage();
 			//LOG(INFO) << "Jotaro: last message = " << msg;
+			uint32_t hmdDeviceManipulationHandle = 0;
+
+			if (deviceActivated[hmdDeviceManipulationHandle]) {
+				auto m_handle = this->getDeviceManipulationHandleById(hmdDeviceManipulationHandle);
+				m_handle->setMotionCompensationDeviceMode(MotionCompensationDeviceMode::HMDTracking);
+			}
+
 			uint32_t leftDeviceManipulationHandle = 1;
 			uint32_t rightDeviceManipulationHandle = 2;
 			if (msg == "SetRefPos") {

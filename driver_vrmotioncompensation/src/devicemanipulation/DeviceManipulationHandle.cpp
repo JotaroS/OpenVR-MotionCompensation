@@ -147,10 +147,19 @@ namespace vrmotioncompensation
 
 			else if (m_deviceMode == MotionCompensationDeviceMode::GamepadSaber1)
 			{
+				//Check if the pose is valid to prevent unwanted jitter and movement
+				if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
+				{
+					m_motionCompensationManager.applyGamepadSaber(newPose, 1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				}
+			}
+
+			else if (m_deviceMode == MotionCompensationDeviceMode::HMDTracking)
+			{
 			//Check if the pose is valid to prevent unwanted jitter and movement
 			if (newPose.poseIsValid && newPose.result == vr::TrackingResult_Running_OK)
 			{
-				m_motionCompensationManager.applyGamepadSaber(newPose, 1); //right hand (usually left hand controller is recognizied first. I guess differnet in VIVE/oculus(virtual desktop) envirnonment)
+				m_motionCompensationManager.setHMDPos(newPose);
 			}
 			}
 
