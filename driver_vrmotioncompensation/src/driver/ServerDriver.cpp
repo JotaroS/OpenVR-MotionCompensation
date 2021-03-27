@@ -246,6 +246,7 @@ namespace vrmotioncompensation
 					m_handle->setRotOffsetQuat(j["qw-ofs-r"], j["qx-ofs-r"], j["qy-ofs-r"], j["qz-ofs-r"],0);
 					m_handle->setPunchDist(j["punch_dist"],0);
 					m_handle->setSaberRot(j["saber_rot"]);
+					m_handle->setStickSens(j["stick_sens"]);
 				}
 				if (deviceActivated[rightDeviceManipulationHandle]) {
 					auto m_handle = this->getDeviceManipulationHandleById(rightDeviceManipulationHandle);
@@ -256,6 +257,7 @@ namespace vrmotioncompensation
 					m_handle->setRotOffsetQuat(j["qw-ofs-l"], j["qx-ofs-l"], j["qy-ofs-l"], j["qz-ofs-l"], 1);
 					m_handle->setPunchDist(j["punch_dist"], 1);
 					m_handle->setSaberRot(j["saber_rot"]);
+					m_handle->setStickSens(j["stick_sens"]);
 				}
 			}
 			//punching / reaching 'controller' condition

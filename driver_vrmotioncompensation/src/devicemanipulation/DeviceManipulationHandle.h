@@ -93,6 +93,7 @@ namespace vrmotioncompensation
 			void setPunchDist(double val, int idx);
 
 			void setSaberRot(double val);
+			void setStickSens(double val);
 
 			bool handlePoseUpdate(uint32_t& unWhichDevice, vr::DriverPose_t& newPose, uint32_t unPoseStructSize);
 			bool isGoGoActive = true;

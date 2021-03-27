@@ -551,8 +551,8 @@ namespace vrmotioncompensation
 
 			//calculate distance error.
 			
-			double xOffset = _stickOffset[idx][0];
-			double yOffset = _stickOffset[idx][1];
+			double xOffset = _stickOffset[idx][0] * _stickSens;
+			double yOffset = _stickOffset[idx][1] * _stickSens;
 
 			//modify x/z position of saber using xoffset/yoffset here.
 

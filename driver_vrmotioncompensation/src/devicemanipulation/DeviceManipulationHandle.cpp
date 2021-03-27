@@ -210,5 +210,8 @@ namespace vrmotioncompensation
 		void DeviceManipulationHandle::setSaberRot(double val) {
 			m_motionCompensationManager.setSaberRot(val);
 		}
+		void DeviceManipulationHandle::setStickSens(double val) {
+			m_motionCompensationManager.setStickSens(val);
+		}
 	} // end namespace driver
 } // end namespace vrmotioncompensation
